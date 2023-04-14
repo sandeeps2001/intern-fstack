@@ -1,0 +1,3 @@
+<template>
+    <invite/>
+</template>
