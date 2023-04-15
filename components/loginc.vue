@@ -1,28 +1,37 @@
 <script setup>
-const router = useRouter()
 const email = ref('');
+const resp = ref('');
 const password = ref('');
 const login = async () =>{
-let res = await $fetch('/api/auth',{
+    if (!email.value || !password.value){
+        alert('enter all credentials required')
+        return
+    }
+let res = await $fetch('/api/loginserver', {
     method: 'POST',
     body:{
        e : email.value,
        p : password.value
     }
 })
+
 if (res === true){
-    navigateTo('second/')
+    navigateTo('/login/userdashboard/')
 }
 
+if(res === false){
+resp.value = "invalid user"
+}
 }
 </script>
 <template>
     <div>
     <div class = 'container'>
-        <h2> Super Admin Login</h2>
+        <h2> Login Page</h2>
         <input class = "email" type="text" placeholder="email" name ='email' v-model="email"  required>
         <input class = "password" type="text" placeholder="password" name ='password' v-model="password"  required>
         <button @click="login()" class="login"> login </button> 
+        {{ resp.value }}
     </div>
 </div>
 </template>

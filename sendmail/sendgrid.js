@@ -1,8 +1,7 @@
 const sgMail = require('@sendgrid/mail')
-const sendgridAPIKey = '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'
-sgMail.setApiKey(sendgridAPIKey)
+sgMail.setApiKey('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')
 sgMail.send ({
-  to: 'sandy4adhi@gmail.com', // Change to your recipient
+  to: 'sandygosimp@gmail.com', // Change to your recipient
   from: 'sandy4adhi@gmail.com', // Change to your verified sender
   subject: 'my first mail',
   text: 'hi there i will fight',

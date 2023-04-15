@@ -1,9 +1,8 @@
 <script setup>
-const router = useRouter()
 const email = ref('');
 const password = ref('');
 const login = async () =>{
-let res = await $fetch('/api/auth',{
+let res = await $fetch('/api/signup',{
     method: 'POST',
     body:{
        e : email.value,
@@ -11,15 +10,17 @@ let res = await $fetch('/api/auth',{
     }
 })
 if (res === true){
-    navigateTo('second/')
+    navigateTo('login/')
 }
-
+if(res === false) {
+    alert('enter all credentials');
+}
 }
 </script>
 <template>
     <div>
     <div class = 'container'>
-        <h2> Super Admin Login</h2>
+        <h2> set password to continue</h2>
         <input class = "email" type="text" placeholder="email" name ='email' v-model="email"  required>
         <input class = "password" type="text" placeholder="password" name ='password' v-model="password"  required>
         <button @click="login()" class="login"> login </button> 
