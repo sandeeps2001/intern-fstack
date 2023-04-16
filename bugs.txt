@@ -1,0 +1,18 @@
+//middleware
+import { useAuth } from "~/composables/usestate";
+
+export default defineNuxtRouteMiddleware(()=>{
+const auth = useAuth();
+if(auth.value.isauthenticated){
+    navigateTo('/login/userdashboard/')
+}
+});
+
+//pagemeta
+<script setup>
+import pageauth from '~/server/api/middleware/pageauth';
+
+definePageMeta({
+    middleware: ["pageauth"]
+})
+</script>

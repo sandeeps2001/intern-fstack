@@ -1,4 +1,6 @@
 <script setup>
+import { useAuth } from '~/composables/usestate';
+
 const email = ref('');
 const resp = ref('');
 const password = ref('');
@@ -14,9 +16,9 @@ let res = await $fetch('/api/loginserver', {
        p : password.value
     }
 })
-
+console.log(res)
 if (res === true){
-    navigateTo('/login/userdashboard/')
+    navigateTo('/login/userdashboard/');
 }
 
 if(res === false){
@@ -27,11 +29,11 @@ resp.value = "invalid user"
 <template>
     <div>
     <div class = 'container'>
+        <div class = 'inv'>{{ resp }}</div>
         <h2> Login Page</h2>
         <input class = "email" type="text" placeholder="email" name ='email' v-model="email"  required>
         <input class = "password" type="text" placeholder="password" name ='password' v-model="password"  required>
         <button @click="login()" class="login"> login </button> 
-        {{ resp.value }}
     </div>
 </div>
 </template>
@@ -43,6 +45,9 @@ padding : 20px;
 box-sizing: border-box;
 margin-top: 50px;
 display: flex;
+}
+.inv{
+    color: red;
 }
 .container{
   margin-left:  700px;

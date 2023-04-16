@@ -1,8 +1,14 @@
+<script setup>
+const inviteusers = () =>{
+navigateTo('/');
+}
+</script>
+
 <template>
     <div class = "nav">
 <button class = "iuser" > <h1>invite users</h1> </button>
 <button class = "cchannel"> <h1>create channel</h1> </button>
-<button class="ruser"><span class ="j">inviteusers</span></button>
+<button class="ruser"><span class ="j" @click="inviteusers()">inviteusers</span></button>
 </div>
 
 </template>

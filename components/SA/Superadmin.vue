@@ -11,7 +11,7 @@ let res = await $fetch('/api/auth',{
     }
 })
 if (res === true){
-    navigateTo('second/')
+    navigateTo('/superadmin/second/')
 }
 
 }
