@@ -1,6 +1,6 @@
 <template>
     <div>
-      <SASuperadmin />
+      <Superadmin />
     </div>
   </template>
   

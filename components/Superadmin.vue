@@ -1,5 +1,4 @@
 <script setup>
-const router = useRouter()
 const email = ref('');
 const password = ref('');
 const login = async () =>{
@@ -10,7 +9,12 @@ let res = await $fetch('/api/auth',{
        p : password.value
     }
 })
+
 if (res === true){
+    const uemail = getemail()
+    uemail.value = email.value
+    const auth = isauthenticated()
+    auth.value = true
     navigateTo('/superadmin/second/')
 }
 

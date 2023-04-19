@@ -52,8 +52,77 @@ return lresult;
     }
     }
 
+//create channel
+const createchannel = async(c,d,e)=> {
+    try{
+const {MongoClient, ObjectId} = require('mongodb')
+const connectionURL = 'mongodb://127.0.0.1:27017'
+const databaseName = 'channel';
+const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
+const db = await client.db(databaseName);
+const res = await db.collection(`${c}`).insertOne(
+   {
+           channelname : `${c}`,
+             email : `${e}`,
+             date: `${d}`
+         })
+return true;
+        }
+        
+        catch(err){
+            console.log('err',err)
+            return false
+        }
+    
+    }
+
+    const fetchchannel = async(e)=> {
+        try{
+    const {MongoClient, ObjectId} = require('mongodb')
+    const connectionURL = 'mongodb://127.0.0.1:27017'
+    const databaseName = 'channel';
+    const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
+    const db = await client.db(databaseName);
+    var Mykeys = []
+ const a = await db.listCollections().toArray()
+ a.forEach(element => {
+         Mykeys.push(element.name)
+           })
+           return Mykeys;
+            }
+            catch(err){
+                console.log('err',err)
+                return false
+            }
+        
+        }
+        const fetchchanneldata = async(c)=> {
+            try{
+        const {MongoClient, ObjectId} = require('mongodb')
+        const connectionURL = 'mongodb://127.0.0.1:27017'
+        const databaseName = 'channel';
+        const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
+        const db = await client.db(databaseName);
+        var Mykeys = []
+     const a = await db.collection(`${c}`)
+     a.forEach(element => {
+             Mykeys.push(element.name)
+               })
+               return Mykeys;
+                }
+                catch(err){
+                    console.log('err',err)
+                    return false
+                }
+            
+            }
+    
     module.exports ={
        dbc,
        signuppost,
-       logincheck
+       logincheck,
+       createchannel,
+       fetchchannel,
+       fetchchanneldata
+
     }

@@ -1,4 +1,1 @@
-export const useAuth = () =>
-useState(()=> ({
-    isauthenticated: false,
-}));
+export const isauthenticated = () => useState("val", () => false)

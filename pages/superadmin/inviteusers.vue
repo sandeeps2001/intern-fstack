@@ -1,5 +1,8 @@
 <template>
     <div>
-        <SAIu/>
+        <InviteusersDetails/>
+        <InviteusersDynamicbutton/>
+        <InviteusersCheckbox/>
+        
     </div>
 </template>

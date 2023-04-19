@@ -1,6 +1,4 @@
 <script setup>
-import { useAuth } from '~/composables/usestate';
-
 const email = ref('');
 const resp = ref('');
 const password = ref('');
@@ -16,7 +14,6 @@ let res = await $fetch('/api/loginserver', {
        p : password.value
     }
 })
-console.log(res)
 if (res === true){
     navigateTo('/login/userdashboard/');
 }
