@@ -11,7 +11,7 @@ const cchannel = async () =>{
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const d = new Date();
 const da = new Date();
-var date = da.getDate() 
+let date = da.getDate() 
 let month = months[d.getMonth()];
 const fdate = `${date}`+ 'th' +' ' + `${month}`
 const em = getemail()
@@ -35,9 +35,31 @@ else{
 
 </script>
 <template>
-    <div>
+    <div class = "container">
         <h2> create channel</h2>
         <input class = "channelname" type="text" placeholder="channelname" v-model="cname"  required>
-        <button class = 'button' @click= "cchannel()" >createchannel</button>
+        <button class = 'buttons' @click= "cchannel()" >createchannel</button>
     </div>
 </template>
+
+<style scoped>
+.container{
+  margin-left:  700px;
+  margin-top: 200px;
+}
+.channelname{
+    width: 200px;
+    height: 50px;
+}
+.buttons{
+    background-color: blue;
+    cursor: pointer;
+    margin-left: 120px;
+    margin-top: 30px;
+    width: auto;
+    height: auto;
+    text-align: center;
+    color: aliceblue;
+}
+
+</style>

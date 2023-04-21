@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nuxtjs-extra/ant-design-vue": "^1.0.2",
     "@nuxtjs/dotenv": "^1.4.1",
     "@sendgrid/mail": "^7.7.0",
     "dotenv": "^16.0.3",

@@ -18,7 +18,9 @@ let res = await $fetch('/api/fetchchannels', {
        <p class = p> AVAILABLE CHANNELS </p>
     </div>
     <button class = "channels" v-for="size in res" @click="fetching(size)">
+        <div class = "cd">
         <h1> {{size}} </h1>
+        </div>
         </button> 
     </template>
 <style scope>
@@ -30,5 +32,10 @@ let res = await $fetch('/api/fetchchannels', {
 
 .p{
     font-size :xx-large;
+}
+.cd{
+    width:200px;
+    height: 200px;
+    
 }
 </style>

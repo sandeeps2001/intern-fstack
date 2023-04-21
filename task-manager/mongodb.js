@@ -117,12 +117,38 @@ return true;
             
             }
     
+  
+
+            const fetchchannelmessage = async(c)=> {
+                try{
+            mes = []
+            const {MongoClient, ObjectId} = require('mongodb')
+            const connectionURL = 'mongodb://127.0.0.1:27017'
+            const databaseName = 'channel';
+            const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
+            const db = await client.db('channel');
+            const res = await db.collection(c).find({}).toArray()
+            res.forEach(elm =>{
+                if(elm.message){
+                    mes.push(elm.message)
+                }
+            })
+            console.log(mes)
+            return mes
+            }
+                
+                    catch(err){
+                        console.log('err',err)
+                        return false
+                    }
+                
+                }
     module.exports ={
        dbc,
        signuppost,
        logincheck,
        createchannel,
        fetchchannel,
-       fetchchanneldata
-
+       fetchchanneldata,
+       fetchchannelmessage
     }

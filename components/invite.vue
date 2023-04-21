@@ -1,6 +1,6 @@
 <script setup>
 const inviteusers = () =>{
-navigateTo('/superadmin/second/');
+navigateTo('/superadmin/inviteusers/');
 }
 const createchannel = ()=>{
   navigateTo('/superadmin/createchannel/');

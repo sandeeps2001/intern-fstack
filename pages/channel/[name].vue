@@ -1,27 +1,31 @@
 <script setup>
 const router = useRouter()
 const d = router.currentRoute.value.params
-const c = d.name 
-const login = async () =>{
-let res = await $fetch('/api/loginserver', {
+const c = d.name  
+let res = await $fetch('/api/channelmsg', {
     method: 'POST',
     body:{
-       e : email.value,
-       p : password.value
+       cname : c
     }
-})
-if (res === true){
-    navigateTo('/login/userdashboard/');
-}
-
-if(res === false){
-resp.value = "invalid user"
-}
-}
-
+});
 </script>
 <template>
     <div>
-    
+        {{ c }}
+    <div class="messages" v-for="d in res">
+        {{ d }}
+    <button > edit </button>
+    <button> delete </button>
+    </div>
     </div>
 </template>
+
+
+<style setup>
+.messages{
+width : max-width;
+height : 100px;
+border: 2px solid black;
+}
+
+</style>
