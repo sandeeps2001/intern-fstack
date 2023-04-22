@@ -3,7 +3,7 @@ const router = useRouter()
 function fetching(s){
     navigateTo(`/channel/${s}`)
 }
-const em = getemail()
+const em = loginemail()
 const gmail = em.value
 let res = await $fetch('/api/fetchchannels', {
     method: 'POST',

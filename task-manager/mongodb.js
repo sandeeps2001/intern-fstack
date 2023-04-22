@@ -75,26 +75,31 @@ return true;
         }
     
     }
+    
 
     const fetchchannel = async(e)=> {
         try{
     const {MongoClient, ObjectId} = require('mongodb')
     const connectionURL = 'mongodb://127.0.0.1:27017'
-    const databaseName = 'channel';
+    const databaseName = 'acs';
     const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
     const db = await client.db(databaseName);
-    var Mykeys = []
- const a = await db.listCollections().toArray()
- a.forEach(element => {
-         Mykeys.push(element.name)
-           })
-           return Mykeys;
+    var Mykeys = [];
+    const a = await db.collection(e).find().forEach(function(doc) {
+    for(var key in doc) {
+        if(Mykeys.indexOf(key) === -1) {
+            Mykeys.push(key);
+        }
+    }
+    });
+    Mykeys.shift()
+    console.log(Mykeys)
+    return Mykeys
             }
-            catch(err){
-                console.log('err',err)
-                return false
-            }
-        
+    catch(err){
+    console.log('err',err)
+    return false
+              }
         }
         const fetchchanneldata = async(c)=> {
             try{
@@ -143,6 +148,39 @@ return true;
                     }
                 
                 }
+
+
+                const fetchchannelacs = async(cname,gmail)=> {
+                    try{
+                        let arr=[];
+                        let b = `${cname}` 
+                        let myobj = {
+                            _id : 0,
+                            [b]:1
+                        }
+                        const {MongoClient, ObjectId} = require('mongodb')
+                        const connectionURL = 'mongodb://127.0.0.1:27017'
+                        const databaseName = 'acs';
+                        const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
+                        const db = await client.db('acs');
+                        const res = await db.collection(`${gmail}`).find({}, {projection:myobj}).toArray()
+                         res.forEach(ele => {
+                         let s =  Object.values(ele)
+                         let g = s.toString()
+                         let l = g.split(" ") 
+                         l.forEach(element=>{
+                            arr.push(element)
+                         })
+                        })
+                        console.log(arr)
+                        return arr
+                      }  catch(err){
+                                    console.log('err',err)
+                                    return false
+                                }
+                    
+                    }
+
     module.exports ={
        dbc,
        signuppost,
@@ -150,5 +188,6 @@ return true;
        createchannel,
        fetchchannel,
        fetchchanneldata,
-       fetchchannelmessage
+       fetchchannelmessage,
+       fetchchannelacs
     }

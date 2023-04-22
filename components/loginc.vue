@@ -15,6 +15,8 @@ let res = await $fetch('/api/loginserver', {
     }
 })
 if (res === true){
+    const em = loginemail()
+    em.value = email.value 
     navigateTo('/login/userdashboard/');
 }
 
