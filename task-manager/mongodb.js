@@ -181,6 +181,47 @@ return true;
                     
                     }
 
+                    const messageupdate = async(oldvalue,newvalue,collection)=> {
+                        try{
+                            const {MongoClient, ObjectId} = require('mongodb')
+                            const connectionURL = 'mongodb://127.0.0.1:27017'
+                            const databaseName = 'acs';
+                            const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
+                            const db = await client.db('channel');
+                            const res = await db.collection(`${collection}`).updateOne({message:oldvalue},{
+                                    $set : {
+                                         message:newvalue,
+                                           }
+                                 })
+                             console.log(res.modifiedCount)
+                            return true
+                            }
+                          catch(err){
+                                        console.log('err',err)
+                                        return false
+                                    }
+                                }
+                        
+                        
+          const messagedelete = async(value,collection)=> {
+                        try{
+                            const {MongoClient, ObjectId} = require('mongodb')
+                            const connectionURL = 'mongodb://127.0.0.1:27017'
+                            const databaseName = 'acs';
+                            const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
+                            const db = await client.db('channel');
+                            const res = await db.collection(`${collection}`).deleteOne({message:value})
+                            console.log("field deleted")
+                            return true
+                            }
+                          catch(err){
+                                        console.log('err',err)
+                                        return false
+                                    }
+                                }
+                        
+                        
+
     module.exports ={
        dbc,
        signuppost,
@@ -189,5 +230,7 @@ return true;
        fetchchannel,
        fetchchanneldata,
        fetchchannelmessage,
-       fetchchannelacs
+       fetchchannelacs,
+       messageupdate,
+       messagedelete
     }

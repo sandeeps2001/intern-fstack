@@ -1,12 +1,14 @@
 <script setup>
 const router = useRouter()
-let read = false
-let  edit = false
-let  del = false
-let writter = false
-
-const d = router.currentRoute.value.params
-const c = d.name  
+let editvalue = ref('')
+let read = ref('')
+let  edit = ref('')
+let  del = ref('')
+let writter = ref('')
+let emodal = ref('')
+let datachange = ref('')
+const k = router.currentRoute.value.params
+const c = k.name  
 console.log("inside dynamic")
 const email = loginemail()
 let acs = await $fetch('/api/accesschannel', {
@@ -16,22 +18,19 @@ let acs = await $fetch('/api/accesschannel', {
        gmail : email.value
     }
 });
-console.log(acs)
+ 
 acs.forEach(element => {
- let s =  Object.values(element)
- g = s.toString()
-                        });
-// acs.forEach(element => {
-//    if(element === 'read'){
-//     read = true
-//    }
-//    if(element === 'edit'){
-//     edit = true
-//    }
-//    if(element === 'delete') {
-//      del  = true
-//    }
-// });
+    console.log(element)
+   if(element === 'read'){
+    read.value = true
+   }
+   if(element === 'edit'){
+    edit.value = true
+   }
+   if(element === 'delete') {
+     del.value  = true
+   }
+});
 
 
 let res = await $fetch('/api/channelmsg', {
@@ -41,30 +40,101 @@ let res = await $fetch('/api/channelmsg', {
     }
 });
 if(!read && edit && del){
-  writter = true
+  writter.value = true
 }
+function editmodal(d){
+emodal.value = true
+datachange.value = d
+}
+
+const editmodalupdate = async ()=>{
+if (!editvalue.value){
+return 
+}
+let update = await $fetch('/api/messageupdate', {
+    method: 'POST',
+    body:{
+        oldvalue : datachange.value,
+        newvalue : editvalue.value,
+        collection: c
+    }
+});
+if (update === true){
+    console.log("changes succesfull")
+    editvalue.value = null
+    emodal.value = false
+
+}
+else{
+ console.log('unable to make changes')
+}
+}
+
+const dlefunc = async (d)=>{
+let del = await $fetch('/api/messagedelete', {
+    method: 'POST',
+    body:{
+        value : d,
+        collection: c
+    }
+});
+if (del === true){
+    console.log("deleted succesfully")
+    
+
+}
+else{
+ console.log('unable to delete')
+}
+}
+
+
 </script>
 <template>
     <div v-if="writter">
     <button>CREATE POST</button>
     </div>
     <div v-else>
+        <div v-show="!emodal">
     <h1>channel {{ c }} </h1>
     <button v-show="edit">create post</button> 
     <div v-show = "read" class="messages" v-for="d in res">
-        <h3>{{ d }}</h3>
-    <button v-show="edit"> edit </button>
-    <button v-show="del"  > delete </button>
+        <h3>{{d}}</h3>
+        <div v-show="!emodal">
+    <button v-show="edit" @click ="editmodal(d)"> edit </button>
+    <button v-show="del" @click ="dlefunc(d)"> delete </button>
     </div>
     </div>
+        </div>
+    <div class = "emodalc" v-show="emodal">
+  <input class = "inp"  type="text" placeholder="type here...." v-model="editvalue">
+  <br><br><button class="submit" @click = "editmodalupdate()"> submit </button>
+    </div>
+    </div>
+    
 </template>
 
 
 <style setup>
 .messages{
+display: flexbox;
 width : max-width;
 height : 100px;
 border: 2px solid black;
 }
 
+.emodalc{
+    background-color: blue;
+    margin-left: 700px;
+    width: 300px;
+    height: 300px;
+}
+.inp{
+    margin-top: 80px;
+    margin-left: 20px;
+    padding: 20px;
+}
+.submit{
+    margin-left: 20px;
+}
 </style>

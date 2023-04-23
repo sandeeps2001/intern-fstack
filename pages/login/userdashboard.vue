@@ -1,14 +1,15 @@
 <script setup>
+const gmail = ref('')
 const router = useRouter()
 function fetching(s){
     navigateTo(`/channel/${s}`)
 }
 const em = loginemail()
-const gmail = em.value
+gmail.value = em.value
 let res = await $fetch('/api/fetchchannels', {
     method: 'POST',
     body:{
-       e : gmail
+       e : gmail.value
     }, 
 })
 </script>  
