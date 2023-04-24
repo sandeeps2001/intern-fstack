@@ -7,6 +7,8 @@ let  del = ref('')
 let writter = ref('')
 let emodal = ref('')
 let datachange = ref('')
+let createpostemodeal= ref('')
+let postvalue = ref('')
 const k = router.currentRoute.value.params
 const c = k.name  
 console.log("inside dynamic")
@@ -70,6 +72,7 @@ else{
 }
 }
 
+
 const dlefunc = async (d)=>{
 let del = await $fetch('/api/messagedelete', {
     method: 'POST',
@@ -88,6 +91,35 @@ else{
 }
 }
 
+const createpostmodal = () => {
+createpostemodeal.value = true
+}
+
+
+const createpost = async()=>{
+    console.log(postvalue.value)
+    if(!postvalue.value){
+        createpostemodeal.value = false
+        return
+    }
+    let create = await $fetch('/api/messagecreate', {
+    method: 'POST',
+    body:{
+        messagedata : postvalue.value,
+        collection: c
+    }
+});
+if(create === true){
+    console.log("post created")
+    createpostemodeal.value = false
+}
+else{
+console.log("post not created")
+createpostemodeal.value = false
+}
+}
+
+
 
 </script>
 <template>
@@ -96,8 +128,8 @@ else{
     </div>
     <div v-else>
         <div v-show="!emodal">
-    <h1>channel {{ c }} </h1>
-    <button v-show="edit">create post</button> 
+    <h1>channel {{ c }} {{ postvalue }}</h1>
+    <button v-show="edit" @click="createpostmodal()">create post</button> 
     <div v-show = "read" class="messages" v-for="d in res">
         <h3>{{d}}</h3>
         <div v-show="!emodal">
@@ -109,6 +141,10 @@ else{
     <div class = "emodalc" v-show="emodal">
   <input class = "inp"  type="text" placeholder="type here...." v-model="editvalue">
   <br><br><button class="submit" @click = "editmodalupdate()"> submit </button>
+    </div>
+    <div class = "writepost" v-show="createpostemodeal">
+  <input class = "inputpost"  type="text" placeholder="type here...." v-model="postvalue">
+  <br><br><button class="submitpost" @click = "createpost()"> submit </button>
     </div>
     </div>
     
@@ -137,4 +173,19 @@ border: 2px solid black;
 .submit{
     margin-left: 20px;
 }
+.inputpost{
+    margin-top: 80px;
+    margin-left: 20px;
+    padding: 20px;
+}
+.submitpost{
+    margin-left: 20px;
+}
+.writepost{
+    background-color: blue;
+    margin-left: 700px;
+    width: 300px;
+    height: 300px;
+}
+
 </style>

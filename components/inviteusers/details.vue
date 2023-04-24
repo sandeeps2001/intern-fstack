@@ -1,13 +1,17 @@
 
 <script setup>
+const useChannelaccess = () => useState("channel", () => { })
+const v = true
+const c = ref('')
 const read = ref('')
 const write = ref('')
 const del = ref('')
 const name = ref('')
 const email = ref('')
 const channelname = ref('')
-function fetching(s){
+function fetching(channel){
     channelname.value = s
+    c.value = channel
 }
 const obj = {
     emailID : email.value,
@@ -28,46 +32,36 @@ let res = await $fetch('/api/fetchchannels', {
        e : gmail
     }, 
 })
-
-
-
-
+const hello  = useChannelaccess()
+console.log(hello)
+console.log(res,)
 </script>
 
 
-<template>
-    <!-- <div class = 'container'>
-        <h1>invite user</h1>
-    
-  <a-tabs v-model:activeKey="activeKey">
-    <a-tab-pane key="1" tab="Tab 1">Content of Tab Pane 1</a-tab-pane>
-    <a-tab-pane key="2" tab="Tab 2" force-render>Content of Tab Pane 2</a-tab-pane>
-    <a-tab-pane key="3" tab="Tab 3">Content of Tab Pane 3</a-tab-pane>
-  </a-tabs>
-</div> -->
 
-<!-- 
+
+<template>
+        
         {{ read }}
         {{ write }}
         {{ del }}
-        <input class = "name" type="text" placeholder="name"  v-model="name" required>
+        <input class = "name" type="text" placeholder="name" v-model="name" required>
         <input class = "email" type="text" placeholder="email" v-model="email"  required>
         <p class = "p"> AVAILABLE CHANNELS </p>
-        <button class = "channels" v-for="size in res" @click="fetching(size)">
+        <button class = "channels" v-for="channel in res" @click="fetching(channel)">
         <div class = "cd">
-        <h1> {{size}} </h1>
+        <h1> {{channel}} </h1>
         </div>
         </button>
         <div>
         <label> read</label>
-        <input type = "checkbox" value="read" v-model="read"  >     
+        <input type = "checkbox" value="read" checked = "true" v-model="c.read"  >     
         <label > write</label>   
         <input type = "checkbox" value="write" v-model="write" >
         <label>delete</label>
         <input type = "checkbox" value="delete" v-model="del"  >
         </div>
-        </div>
-    <button class = "submit">submit</button> -->
+    <button class = "submit">submit</button>
 </template>
 
 <style scoped>

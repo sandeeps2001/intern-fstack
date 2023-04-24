@@ -220,7 +220,23 @@ return true;
                                     }
                                 }
                         
-                        
+                                const messagecreatembd = async(messagedata ,collection)=> {
+                                    try{
+                                        const {MongoClient, ObjectId} = require('mongodb')
+                                        const connectionURL = 'mongodb://127.0.0.1:27017'
+                                        const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
+                                        const db = await client.db('channel');
+                                        console.log(collection)
+                                        console.log(messagedata)
+                                        const res = await db.collection(`${collection}`).insertOne({message: `${messagedata}`})
+                                        console.log(res)
+                                        return true
+                                             }
+                                      catch(err){
+                                                    console.log('err',err)
+                                                    return false
+                                                }
+                                            }           
 
     module.exports ={
        dbc,
@@ -232,5 +248,6 @@ return true;
        fetchchannelmessage,
        fetchchannelacs,
        messageupdate,
-       messagedelete
+       messagedelete,
+       messagecreatembd
     }
