@@ -1,26 +1,14 @@
-
 <script setup>
-const useChannelaccess = () => useState("channel", () => { })
-const v = true
-const c = ref('')
 const read = ref('')
 const write = ref('')
 const del = ref('')
+const v = true
+const c = ref('')
 const name = ref('')
 const email = ref('')
-const channelname = ref('')
-function fetching(channel){
-    channelname.value = s
-    c.value = channel
-}
-const obj = {
-    emailID : email.value,
-    channels : 
-    {
-       name : 'A',
-       access : []
-
-    }
+let channelname = ref('')
+let channelaccess = {
+   channel:{}
 }
 
 
@@ -32,36 +20,60 @@ let res = await $fetch('/api/fetchchannels', {
        e : gmail
     }, 
 })
-const hello  = useChannelaccess()
-console.log(hello)
-console.log(res,)
+
+res.forEach(elm=>{
+    channelaccess.channel[elm] = {
+    read : false,
+    write: false,
+    del :  false
+}
+})
+
+function fetching(channelnamef){
+channelname.value = channelnamef
+read.value = channelaccess.channel[channelnamef].read 
+write.value = channelaccess.channel[channelnamef].write
+del.value = channelaccess.channel[channelnamef].del
+}
+
+function readchecklistener(event){
+     channelaccess.channel[channelname.value].read = event
+}
+function writechecklistener(event){
+     channelaccess.channel[channelname.value].write = event
+}
+function delchecklistener(event){
+     channelaccess.channel[channelname.value].del = event
+}
+
+console.log(channelaccess)
 </script>
 
 
 
 
 <template>
-        
-        {{ read }}
-        {{ write }}
-        {{ del }}
+    {{ channelaccess.channel.read }}
         <input class = "name" type="text" placeholder="name" v-model="name" required>
         <input class = "email" type="text" placeholder="email" v-model="email"  required>
         <p class = "p"> AVAILABLE CHANNELS </p>
         <button class = "channels" v-for="channel in res" @click="fetching(channel)">
         <div class = "cd">
         <h1> {{channel}} </h1>
+        
         </div>
         </button>
         <div>
+            <div v-show="channelname">
         <label> read</label>
-        <input type = "checkbox" value="read" checked = "true" v-model="c.read"  >     
-        <label > write</label>   
-        <input type = "checkbox" value="write" v-model="write" >
+        <input type = "checkbox" value="true" v-model= "read" @change="readchecklistener($event.target._modelValue)" >     
+     <label > write</label>   
+        <input type = "checkbox" value="write" v-model="write" @change="writechecklistener($event.target._modelValue)"   >
         <label>delete</label>
-        <input type = "checkbox" value="delete" v-model="del"  >
+        <input type = "checkbox" value="delete" v-model="del" @change="delchecklistener($event.target._modelValue)" > 
         </div>
-    <button class = "submit">submit</button>
+        </div>
+    <button class = "submit" @click="submit()">submit</button>
 </template>
 
 <style scoped>
