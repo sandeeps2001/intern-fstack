@@ -121,8 +121,27 @@ return true;
                 }
             
             }
-    
-  
+            const allchannelnames = async(c)=> {
+                try{
+                    const {MongoClient, ObjectId} = require('mongodb')
+                    const connectionURL = 'mongodb://127.0.0.1:27017'
+                    const databaseName = 'channel';
+                    const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
+                    const db = await client.db(databaseName);
+                    var Mykeys = []
+                 const a = await db.listCollections().toArray()
+                 a.forEach(element => {
+                           Mykeys.push(element.name)
+                 })
+                 Mykeys.sort()
+                 return Mykeys
+                            }
+                            catch(err){
+                                console.log('err',err)
+                                return false
+                            }
+                        
+                        }
 
             const fetchchannelmessage = async(c)=> {
                 try{
@@ -150,7 +169,7 @@ return true;
                 }
 
 
-                const fetchchannelacs = async(cname,gmail)=> {
+                const fetchchannelacs = async(cname , gmail)=> {
                     try{
                         let arr=[];
                         let b = `${cname}` 
@@ -236,7 +255,24 @@ return true;
                                                     console.log('err',err)
                                                     return false
                                                 }
-                                            }           
+                                            }   
+                                   
+                                            const inviteuserswithacs = async(email , mainobj)=> {
+                                                try{
+                                                    const {MongoClient, ObjectId} = require('mongodb')
+                                                    const connectionURL = 'mongodb://127.0.0.1:27017'
+                                                    const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
+                                                    const db = await client.db('acs');
+                                                    const res = await db.collection(`${email}`).insertOne(mainobj)
+                                                    console.log(res)
+                                                    return true
+                                                         }
+                                                  catch(err){
+                                                                console.log('err',err)
+                                                                return false
+                                                            }
+                                                        }                
+                                            
 
     module.exports ={
        dbc,
@@ -249,5 +285,7 @@ return true;
        fetchchannelacs,
        messageupdate,
        messagedelete,
-       messagecreatembd
+       messagecreatembd,
+       inviteuserswithacs,
+       allchannelnames
     }

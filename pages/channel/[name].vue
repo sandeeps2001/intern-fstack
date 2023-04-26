@@ -26,7 +26,7 @@ acs.forEach(element => {
    if(element === 'read'){
     read.value = true
    }
-   if(element === 'edit'){
+   if(element === 'write'){
     edit.value = true
    }
    if(element === 'delete') {

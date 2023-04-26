@@ -1,5 +1,5 @@
 <template>
     <div>
-        <InviteusersDetails/>
+        <Invite/>
     </div>
 </template>
