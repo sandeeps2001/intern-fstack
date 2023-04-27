@@ -1,4 +1,6 @@
 <script setup>
+const oib = ref('')
+const ocb = ref('')
 const on = ref('')
 const iu = ref('')
 const cc = ref('')
@@ -11,6 +13,21 @@ const c = ref('')
 const name = ref('')
 const email = ref('')
 let channelname = ref('')
+const rese = reactive({
+    a:{
+        l: {
+            k:0
+        }
+    }
+});
+// let invited = await $fetch('/api/getinviteuserswithacs', {
+//     method: 'POST',
+//     body:{
+//        e : email.value,
+//     },
+    
+// })
+
 let channelaccess = {
    channel:{}
 }
@@ -18,13 +35,13 @@ let channelaccess = {
 
 const em = getemail()
 const gmail = em.value
-let res = await $fetch('/api/fetchallchanels', {
+let {data: res, refresh: lol} = await useFetch('/api/fetchallchanels', {
     method: 'POST',
     body:{
        e : gmail
     }, 
 })
-
+lol()
 res.forEach(elm=>{
     channelaccess.channel[elm] = {
     read : false,
@@ -33,7 +50,12 @@ res.forEach(elm=>{
 }
 })
 
+const inviteuserspage = () =>{
+ocb.value = false
+oib.value = true
+}
 const inviteusers = () =>{
+oib.value = false
 on.value = true
 iu.value = true
 }
@@ -67,6 +89,7 @@ else{
 }
 on.value = false
 iu.value = false
+oib.value = true
 
 let dress = await $fetch('/api/inviteuserswithacs', {
     method: 'POST',
@@ -92,6 +115,7 @@ import { getemail } from '~/composables/superadmin';
 const cname = ref('');
 console.log(cname)
 const cchannel = async () =>{
+    ocb.value = true
     if (!cname.value){
         alert('enter all credentials required')
         return
@@ -123,35 +147,75 @@ else{
 }
 }
 function createchannel(){
+  ocb.value = false
   cc.value = true
   on.value = true
+}
+
+function createchannelpage(){
+    oib.value =false
+    ocb.value = true
 }
 </script>
 
 <template>
     <div class = "nav" v-show="!on">
-<button class = "iuser" > <h1>invite users</h1> </button>
-<button class = "cchannel" @click = "createchannel()"> <h1>create channel </h1> </button>
-<button class="ruser"><span class ="j" @click="inviteusers()">inviteusers</span></button>
+<button class = "iuser" @click="inviteuserspage()"> <h1>invite users</h1> </button>
+<button class = "cchannel" @click = "createchannelpage()"> <h1>create channel </h1> </button>
+<button class="ruser" v-show="oib"><span class ="j" @click="inviteusers()">inviteusers</span></button>
+<button class="ruser" v-show="ocb"><span class ="j" @click="createchannel()">createchannel</span></button>
     </div>
+    <div class="ivnviteddetails" v-show="oib">
+    <table>
+    <tr>
+    <th><h2>Email</h2></th>
+    <th><h2>Access</h2></th>
+    <th><h2>Action</h2></th>   
+  </tr>
+  <tr>
+    <td><p class="c"></p></td>
+    <td><p class="c"></p></td>
+    <td><p class="c"></p></td>
+  </tr>
+
+    </table>
+    </div>
+    <div class="ivnviteddetails" v-show="ocb">
+    <table>
+        <tr>
+    <th><h2>ChannlName</h2></th>
+    <th><h2>Created By</h2></th>
+    <th><h2>Created At</h2></th>
+    <th><h2>Action</h2></th>   
+  </tr>
+  <tr>
+    <td><p class="c"></p></td>
+    <td><p class="c"></p></td>
+    <td><p class="c"></p></td>
+    <td><p class="c"></p></td>
+  </tr>
+
+    </table>
+    </div>
+
     <div class=" iv modal" v-show="iu">
       <div class = "container">
         <h1>Invite Users</h1>
         <input class = "name" type="text" placeholder="name" v-model="name" required>
         <input class = "email" type="text" placeholder="email" v-model="email"  required>
-        <p class = "p"> AVAILABLE CHANNELS </p>
+        <p class = "p"><h2>AVAILABLE CHANNELS </h2></p>
         <button class = "channels" v-for="channel in res" @click="fetching(channel)">
         <div class = "cd">
         <h1>{{channel}}</h1>
         </div>
         </button>
         <div>
-            <div v-show="channelname">
-        <label> read</label>
+            <div class = "cb" v-show="channelname">
+        <label class = "G"> read </label>
         <input type = "checkbox" value="true" v-model= "read" @change="readchecklistener($event.target._modelValue)" >     
-     <label > write</label>   
+     <label class = "G"> write</label>   
         <input type = "checkbox" value="write" v-model="write" @change="writechecklistener($event.target._modelValue)"   >
-        <label>delete</label>
+        <label class = "G">delete</label>
         <input type = "checkbox" value="delete" v-model="del" @change="delchecklistener($event.target._modelValue)" > 
         </div>
         </div>
@@ -169,13 +233,25 @@ function createchannel(){
 
 <style lang="scss" scoped>
 
+
 .cd{
+    display: block;
     height: 50px;
     width: 40px;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+table{
+    width: 50%;
+    margin-left: 400px;
+    margin-top: 50px;
 }
 .channels:focus {
     background-color: white;
 }
+
 
 .submit{
 cursor: pointer;
@@ -211,6 +287,7 @@ display: flex;
 .submit{
 margin-top: 50px;
 }
+
 
 .ruser{
     font-size: larger;
@@ -270,5 +347,10 @@ margin-top: 50px;
     height: 40px;
     text-align: center;
     color: aliceblue;
+}
+.j{
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
 }
 </style>

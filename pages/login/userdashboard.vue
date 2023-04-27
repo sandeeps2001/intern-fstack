@@ -20,7 +20,7 @@ let res = await $fetch('/api/fetchchannels', {
     </div>
     <button class = "channels" v-for="size in res" @click="fetching(size)">
         <div class = "cd">
-        <h1> {{size}} </h1>
+        <h1>{{size}}</h1>
         </div>
         </button> 
     </template>
