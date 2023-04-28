@@ -266,7 +266,6 @@ const messagecreatembd = async (messagedata, collection) => {
     const res = await db
       .collection(`${collection}`)
       .insertOne({ message: `${messagedata}` });
-    console.log(res);
     return true;
   } catch (err) {
     console.log("err", err);
@@ -283,7 +282,6 @@ const inviteuserswithacs = async (email, mainobj) => {
     });
     const db = await client.db("acs");
     const res = await db.collection(`${email}`).insertOne(mainobj);
-    console.log(res);
     return true;
   } catch (err) {
     console.log("err", err);
@@ -291,6 +289,63 @@ const inviteuserswithacs = async (email, mainobj) => {
   }
 };
 
+const allmails = async()=>{
+  try {
+    const { MongoClient, ObjectId } = require("mongodb");
+    const connectionURL = "mongodb://127.0.0.1:27017";
+    const databaseName = "acs";
+    const client = await MongoClient.connect(connectionURL, {
+      useUnifiedTopology: true,
+    });
+    const db = await client.db(databaseName);
+    let gmails = [];
+    let mykeys = [];
+    let obj = {
+      mails : [],
+      access : []
+  };
+    const a = await db.listCollections().toArray();
+    a.forEach(async (element) => {
+      gmails.push(element.name);
+    });
+    for(let arr of gmails){
+      const b = await db.collection(arr).find().toArray()
+        for(let doc of b ){
+            mykeys.push(doc)
+        }
+    }
+    obj['mails']= gmails
+    obj['access']= mykeys
+        //     console.log(doc)
+        //         if (mykeys.indexOf(doc) === -1) {
+        //           mykeys.push(doc);
+        //         }
+        //       }
+        //       mykeys.shift();
+
+        //     }
+        //     console.log(mykeys)
+        // }
+    
+    //   obj["email"] = arr;
+    //   obj["access"] = mykeys;
+    //   mainobj["data"] = obj;
+    //   mykeys = [];
+    //   gkeys.push(obj);
+    //   console.log(gkeys);
+    // });
+    return obj
+
+  }
+
+catch (err) {
+    console.log("err", err);
+    return false;
+  }
+
+
+
+}
 // const getuserswithacs = async(c)=> {
 //     try{
 //         const {MongoClient, ObjectId} = require('mongodb')
@@ -330,6 +385,113 @@ const inviteuserswithacs = async (email, mainobj) => {
 
 //             }
 
+//edit user
+const edituseracs = async (email, mainobj) => {
+  try {
+    const { MongoClient, ObjectId } = require("mongodb");
+    const connectionURL = "mongodb://127.0.0.1:27017";
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
+    const db = await client.db("acs");
+    await db.collection(`${email}`).drop()
+    await db.collection(`${email}`).insertOne(mainobj)
+    return true
+  } catch (err) {
+    console.log("err", err);
+    return false;
+  }
+};
+
+
+
+const allchannel = async()=>{
+  try {
+    const { MongoClient, ObjectId } = require("mongodb");
+    const connectionURL = "mongodb://127.0.0.1:27017";
+    const databaseName = "channel";
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
+    const db = await client.db(databaseName);
+    let channelnames = [];
+    let mainarr = []
+    const a = await db.listCollections().toArray();
+    a.forEach(async (element) => {
+      channelnames.push(element.name);
+    });
+    console.log(channelnames)
+for(let arr of channelnames){
+  const b = await db.collection(arr).find().toArray()
+    for(let doc of b ){
+      let obj = {
+        channelname : '',
+        email : '',
+        date : ''
+    }
+        obj.channelname = doc.channelname,
+        obj.email = doc.email,
+        obj.date = doc.date
+     mainarr.push(obj)
+        }
+    }
+    console.log(mainarr)
+        //     console.log(doc)
+        //         if (mykeys.indexOf(doc) === -1) {
+        //           mykeys.push(doc);
+        //         }
+        //       }
+        //       mykeys.shift();
+
+        //     }
+        //     console.log(mykeys)
+        // }
+    
+    //   obj["email"] = arr;
+    //   obj["access"] = mykeys;
+    //   mainobj["data"] = obj;
+    //   mykeys = [];
+    //   gkeys.push(obj);
+    //   console.log(gkeys);
+    // });
+    return mainarr
+
+  }
+
+catch (err) {
+    console.log("err", err);
+    return false;
+  }
+
+
+
+}
+
+const deletechannel = async (channelname) => {
+  let b = `${channelname}`;
+  let myobj = {
+    [b]: "",
+  };
+ let gmails = []
+  try {
+    const { MongoClient, ObjectId } = require("mongodb");
+    const connectionURL = "mongodb://127.0.0.1:27017";
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
+    let db = await client.db("channel");
+    await db.collection(`${channelname}`).drop()
+    db = await client.db("acs");
+    const d = await db.listCollections().toArray();
+    d.forEach(async (element) => {
+      gmails.push(element.name);
+    });
+    for(let doc of gmails){
+      await db.collection(`${doc}`).updateOne({},{$unset : myobj})
+    }
+    return true
+  } catch (err) {
+    console.log("err", err);
+    return false;
+  }
+};
+
+
+
 module.exports = {
   dbc,
   signuppost,
@@ -344,5 +506,9 @@ module.exports = {
   messagecreatembd,
   inviteuserswithacs,
   allchannelnames,
+  allmails,
+  edituseracs,
+  allchannel,
+  deletechannel
   //    getuserswithacs
 };

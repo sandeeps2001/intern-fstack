@@ -1,25 +1,52 @@
 <script setup>
 const oib = ref('')
 const ocb = ref('')
+let access = []
+let postaccess = []
+let objectarray = {}
+let mainarr = []
 const on = ref('')
+const editusers = ref('')
 const iu = ref('')
 const cc = ref('')
+const em = getemail()
+const gmail = em.value
 const trigger = ref('')
 const read = ref('')
 const write = ref('')
 const del = ref('')
 const v = true
+const editchannelemail = ref('')
 const c = ref('')
 const name = ref('')
 const email = ref('')
 let channelname = ref('')
-const rese = reactive({
-    a:{
-        l: {
-            k:0
-        }
-    }
-});
+// const rese = reactive({
+//     a:{
+//         l: {
+//             k:0
+//         }
+//     }
+// });
+
+function editaccess(editchannel){
+editusers.value = true
+editchannelemail.value = editchannel
+}
+
+//print channel
+let allchannel = await $fetch('/api/allchannels', {
+    method: 'GET', 
+})
+console.log(allchannel)
+for(let o = 0 ; o < allchannel.length ; o++){
+    delete allchannel[o]._id
+}
+let newArray = allchannel.filter(value => Object.keys(value).length !== 0);
+
+
+
+
 // let invited = await $fetch('/api/getinviteuserswithacs', {
 //     method: 'POST',
 //     body:{
@@ -27,21 +54,38 @@ const rese = reactive({
 //     },
     
 // })
-
+let allmails = await $fetch('/api/allmails', {
+    method: 'GET', 
+})
+let uemails = allmails.mails
+console.log(allmails)
+for(let i = 0 ; i<allmails.access.length ; i++){
+delete allmails.access[i]._id
+access.push(Object.keys(allmails.access[i]))
+}
+access.forEach(elm=>{
+    postaccess.push(elm.toString())
+})
+//console.log(access[0].toString())
 let channelaccess = {
    channel:{}
 }
 
+uemails.forEach((elm , index)=> {
+    objectarray = {}
+objectarray['email'] = elm
+objectarray['access'] = postaccess[index]
+mainarr.push(objectarray)
+})
 
-const em = getemail()
-const gmail = em.value
-let {data: res, refresh: lol} = await useFetch('/api/fetchallchanels', {
+console.log(mainarr)
+
+let res = await $fetch('/api/fetchallchanels', {
     method: 'POST',
     body:{
        e : gmail
     }, 
 })
-lol()
 res.forEach(elm=>{
     channelaccess.channel[elm] = {
     read : false,
@@ -126,8 +170,6 @@ const da = new Date();
 let date = da.getDate() 
 let month = months[d.getMonth()];
 const fdate = `${date}`+ 'th' +' ' + `${month}`
-const em = getemail()
-const gmail = em.value
 let bus = await $fetch('/api/newchannel', {
     method: 'POST',
     body:{
@@ -156,6 +198,42 @@ function createchannelpage(){
     oib.value =false
     ocb.value = true
 }
+
+const editsubmit = async ()=> {
+on.value = false
+iu.value = false
+oib.value = true
+editusers.value = false
+
+let afteredit = await $fetch('/api/editusersacs', {
+    method: 'POST',
+    body:{
+       e : editchannelemail.value,
+       arr : res,
+       obj : channelaccess
+    },
+    
+})
+if (afteredit === true){
+    console.log("channel edit successfull")
+}
+else{
+    console.log("failed")
+}
+}
+
+const deletechannel = async(chname)=>{
+    let afteredit = await $fetch('/api/deletechannel', {
+    method: 'POST',
+    body:{
+       channel : chname
+    },
+})
+if(afteredit === true){
+    alert("channel deleted")
+}
+}
+
 </script>
 
 <template>
@@ -172,10 +250,10 @@ function createchannelpage(){
     <th><h2>Access</h2></th>
     <th><h2>Action</h2></th>   
   </tr>
-  <tr>
-    <td><p class="c"></p></td>
-    <td><p class="c"></p></td>
-    <td><p class="c"></p></td>
+  <tr v-for="i in mainarr">
+    <td>{{i.email}}</td>
+    <td>{{i.access}}</td>
+    <td><button class = "inviteuserseditbutton" @click="editaccess(i.email)" >edit</button></td>
   </tr>
 
     </table>
@@ -188,11 +266,11 @@ function createchannelpage(){
     <th><h2>Created At</h2></th>
     <th><h2>Action</h2></th>   
   </tr>
-  <tr>
-    <td><p class="c"></p></td>
-    <td><p class="c"></p></td>
-    <td><p class="c"></p></td>
-    <td><p class="c"></p></td>
+  <tr v-for="j in newArray">
+    <td>{{j.channelname }}</td>
+    <td>{{j.email }}</td>
+    <td>{{j.date }}</td>
+    <td><button class="buttondelete" @click="deletechannel(j.channelname)">delete</button></td>
   </tr>
 
     </table>
@@ -228,6 +306,33 @@ function createchannelpage(){
         <button class = 'buttons' @click= "cchannel()" >createchannel</button>
     </div>
 
+
+    <div class=" iv modal" v-show="editusers">
+      <div class = "containeredit">
+        <h1>Edit User</h1>
+        <p class = "p"><h2>AVAILABLE CHANNELS </h2></p>
+        <button class = "channels" v-for="channel in res" @click="fetching(channel)">
+        <div class = "cd">
+        <h1>{{channel}}</h1>
+        </div>
+        </button>
+        <div>
+            <div class = "cb" v-show="channelname">
+        <label class = "G"> read </label>
+        <input type = "checkbox" value="true" v-model= "read" @change="readchecklistener($event.target._modelValue)" >     
+     <label class = "G"> write</label>   
+        <input type = "checkbox" value="write" v-model="write" @change="writechecklistener($event.target._modelValue)"   >
+        <label class = "G">delete</label>
+        <input type = "checkbox" value="delete" v-model="del" @change="delchecklistener($event.target._modelValue)" > 
+        </div>
+        </div>
+    </div>
+    <button class = "submit" @click="editsubmit()">submit</button>
+    </div>
+
+
+
+
 </template>
 
 
@@ -240,8 +345,13 @@ function createchannelpage(){
     width: 40px;
 }
 
-table, th, td {
+td {
   border: 1px solid black;
+font-size: x-large;
+
+}
+table th{
+    border: 1px solid black;
 }
 table{
     width: 50%;
@@ -252,6 +362,9 @@ table{
     background-color: white;
 }
 
+.inviteuserseditbutton{
+    cursor:pointer;
+}
 
 .submit{
 cursor: pointer;
@@ -268,9 +381,13 @@ background-color: blue;
     
 } */
 .container{
-    
     margin-top: 200px;
     padding-left: 800px;
+}
+
+.containeredit{
+    margin-top: 100px;
+    padding-left: 500px;
 }
 input[type = text]{
 width :30%;
