@@ -1,4 +1,6 @@
 import { logincheck } from "~~/task-manager/mongodb.js";
+import {setCookie } from 'h3'
+import jwt from 'jsonwebtoken'
 export default defineEventHandler(async (credentials) => {
   try {
     let { e, p } = await readBody(credentials);
@@ -8,14 +10,18 @@ export default defineEventHandler(async (credentials) => {
       return false;
     }
     if (s.password === p && s.email === e) {
+      const token = jwt.sign({loginemail: e},"YOUR_SECRET_KEY");
+             setCookie(credentials,'loginsession',token,{
+                httpOnly:true,
+                maxAge: 5 * 60 * 60,
+            })
+            
       console.log("password matched");
-      return true;
+      return true
     }
-    console.log("false");
-    return false;
-  } catch (error) {
+    return false
+  } 
+  catch (error) {
     console.log(error);
   }
 });
-
-console.log();

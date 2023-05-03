@@ -6,6 +6,9 @@ export default defineNuxtConfig({
        
         public: {
           dbUser: ""
+        },
+        private:{
+          password: ""
         }
       }
     })

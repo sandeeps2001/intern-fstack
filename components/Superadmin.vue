@@ -2,22 +2,22 @@
 const email = ref('');
 const password = ref('');
 const login = async () =>{
-let res = await $fetch('/api/auth',{
+let {data : res} = await useFetch('/api/auth',{
     method: 'POST',
     body:{
        e : email.value,
        p : password.value
     }
 })
-
-if (res === true){
+console.log(res.value)
+if (res){
     const uemail = getemail()
     uemail.value = email.value
-    const auth = isauthenticated()
-    auth.value = true
     navigateTo('/superadmin/second/')
 }
-
+else{
+    navigateTo('/')
+}
 }
 </script>
 <template>

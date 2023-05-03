@@ -1,15 +1,17 @@
 <script setup>
-const gmail = ref('')
+let {data : cook } = await useFetch('/api/logincookiegetter',{
+     method: 'GET', 
+      })
+      console.log(cook.value)
+const gmail = cook.value.loginemail
 const router = useRouter()
 function fetching(s){
     navigateTo(`/channel/${s}`)
 }
-const em = loginemail()
-gmail.value = em.value
 let res = await $fetch('/api/fetchchannels', {
     method: 'POST',
     body:{
-       e : gmail.value
+       e : gmail
     }, 
 })
 </script>  

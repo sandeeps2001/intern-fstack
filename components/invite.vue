@@ -1,17 +1,19 @@
 <script setup>
-const oib = ref('')
-const ocb = ref('')
+const oib = useCookie('oib')
+const ocb = useCookie('ocb')
 let access = []
 let postaccess = []
 let objectarray = {}
 let mainarr = []
-const on = ref('')
-const editusers = ref('')
-const iu = ref('')
-const cc = ref('')
-const em = getemail()
-const gmail = em.value
-const trigger = ref('')
+const on = useCookie('on')
+const editusers = useCookie('editusers')
+const iu = useCookie('iu')
+const cc = useCookie('cc')
+ let {data : cook } = await useFetch('/api/cookiegetter',{
+     method: 'GET', 
+      })
+const gmail = cook.value.SAemail
+const trigger = useCookie('trigger')
 const read = ref('')
 const write = ref('')
 const del = ref('')
@@ -21,6 +23,8 @@ const c = ref('')
 const name = ref('')
 const email = ref('')
 let channelname = ref('')
+if(on.value === false){
+}
 // const rese = reactive({
 //     a:{
 //         l: {
@@ -35,15 +39,14 @@ editchannelemail.value = editchannel
 }
 
 //print channel
-let allchannel = await $fetch('/api/allchannels', {
+let {data : allchannel , refresh } = await useFetch('/api/allchannels',{
     method: 'GET', 
-})
-console.log(allchannel)
-for(let o = 0 ; o < allchannel.length ; o++){
-    delete allchannel[o]._id
+    })
+for(let o = 0 ; o < allchannel.value.length ; o++){
+    delete allchannel.value[o]._id
 }
-let newArray = allchannel.filter(value => Object.keys(value).length !== 0);
-
+let newArray = allchannel.value.filter(value => Object.keys(value).length !== 0);
+    
 
 
 
@@ -54,14 +57,14 @@ let newArray = allchannel.filter(value => Object.keys(value).length !== 0);
 //     },
     
 // })
-let allmails = await $fetch('/api/allmails', {
+let {data : allmails , refresh : channelaccess2 } = await useFetch('/api/allmails', {
     method: 'GET', 
 })
-let uemails = allmails.mails
-console.log(allmails)
-for(let i = 0 ; i<allmails.access.length ; i++){
-delete allmails.access[i]._id
-access.push(Object.keys(allmails.access[i]))
+let uemails = allmails.value.mails
+
+for(let i = 0 ; i<allmails.value.access.length ; i++){
+delete allmails.value.access[i]._id
+access.push(Object.keys(allmails.value.access[i]))
 }
 access.forEach(elm=>{
     postaccess.push(elm.toString())
@@ -78,15 +81,16 @@ objectarray['access'] = postaccess[index]
 mainarr.push(objectarray)
 })
 
-console.log(mainarr)
 
-let res = await $fetch('/api/fetchallchanels', {
+
+let{data : res , refresh : refreshchannelacess } = await useFetch('/api/fetchallchanels', {
     method: 'POST',
     body:{
        e : gmail
     }, 
 })
-res.forEach(elm=>{
+
+res.value.forEach(elm=>{
     channelaccess.channel[elm] = {
     read : false,
     write: false,
@@ -95,15 +99,18 @@ res.forEach(elm=>{
 })
 
 const inviteuserspage = () =>{
+
 ocb.value = false
 oib.value = true
 }
 const inviteusers = () =>{
+   
 oib.value = false
 on.value = true
 iu.value = true
 }
 function fetching(channelnamef){
+  
 channelname.value = channelnamef
 read.value = channelaccess.channel[channelnamef].read 
 write.value = channelaccess.channel[channelnamef].write
@@ -119,8 +126,7 @@ function writechecklistener(event){
 function delchecklistener(event){
      channelaccess.channel[channelname.value].del = event
 }
-console.log(channelaccess)
-console.log(channelaccess.channel.A)
+
 
 
 const submitiu = async () =>{
@@ -139,13 +145,14 @@ let dress = await $fetch('/api/inviteuserswithacs', {
     method: 'POST',
     body:{
        e : email.value,
-       arr : res,
+       arr : res.value,
        obj : channelaccess
     },
     
 })
 if (dress === true){
     console.log("channel access created")
+    window.location.reload()
 }
 else{
     console.log("failed")
@@ -157,7 +164,6 @@ else{
 import { getemail } from '~/composables/superadmin';
 
 const cname = ref('');
-console.log(cname)
 const cchannel = async () =>{
     ocb.value = true
     if (!cname.value){
@@ -180,19 +186,24 @@ let bus = await $fetch('/api/newchannel', {
     
 })
 if (bus === true){
+ 
     console.log("database created")
     on.value = false
     cc.value = false
+    window.location.reload()
 }
 else{
     console.log("failed")
 }
 }
 function createchannel(){
+   
   ocb.value = false
   cc.value = true
   on.value = true
 }
+
+
 
 function createchannelpage(){
     oib.value =false
@@ -209,13 +220,14 @@ let afteredit = await $fetch('/api/editusersacs', {
     method: 'POST',
     body:{
        e : editchannelemail.value,
-       arr : res,
+       arr : res.value,
        obj : channelaccess
     },
     
 })
 if (afteredit === true){
     console.log("channel edit successfull")
+    window.location.reload()
 }
 else{
     console.log("failed")
@@ -230,7 +242,7 @@ const deletechannel = async(chname)=>{
     },
 })
 if(afteredit === true){
-    alert("channel deleted")
+    window.location.reload()
 }
 }
 
@@ -242,6 +254,7 @@ if(afteredit === true){
 <button class = "cchannel" @click = "createchannelpage()"> <h1>create channel </h1> </button>
 <button class="ruser" v-show="oib"><span class ="j" @click="inviteusers()">inviteusers</span></button>
 <button class="ruser" v-show="ocb"><span class ="j" @click="createchannel()">createchannel</span></button>
+
     </div>
     <div class="ivnviteddetails" v-show="oib">
     <table>
@@ -270,7 +283,7 @@ if(afteredit === true){
     <td>{{j.channelname }}</td>
     <td>{{j.email }}</td>
     <td>{{j.date }}</td>
-    <td><button class="buttondelete" @click="deletechannel(j.channelname)">delete</button></td>
+    <td><button class="buttondelete" @click="deletechannel(j.channelname) ,refresh()">delete</button></td>
   </tr>
 
     </table>

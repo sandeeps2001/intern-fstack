@@ -1,4 +1,9 @@
 <script setup>
+let {data : cook } = await useFetch('/api/logincookiegetter',{
+     method: 'GET', 
+      })
+const gemail = cook.value.loginemail 
+console.log(gemail)
 const router = useRouter()
 let editvalue = ref('')
 let read = ref('')
@@ -12,12 +17,11 @@ let postvalue = ref('')
 const k = router.currentRoute.value.params
 const c = k.name  
 console.log("inside dynamic")
-const email = loginemail()
 let acs = await $fetch('/api/accesschannel', {
     method: 'POST',
     body:{
        cname : c,
-       gmail : email.value
+       gmail : gemail
     }
 });
  
@@ -65,6 +69,7 @@ if (update === true){
     console.log("changes succesfull")
     editvalue.value = null
     emodal.value = false
+    window.location.reload()
 
 }
 else{
@@ -83,8 +88,7 @@ let del = await $fetch('/api/messagedelete', {
 });
 if (del === true){
     console.log("deleted succesfully")
-    
-
+    window.location.reload()
 }
 else{
  console.log('unable to delete')
@@ -112,6 +116,7 @@ const createpost = async()=>{
 if(create === true){
     console.log("post created")
     createpostemodeal.value = false
+    window.location.reload()
 }
 else{
 console.log("post not created")

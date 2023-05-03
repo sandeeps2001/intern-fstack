@@ -9,6 +9,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.2",
     "env-cmd": "^8.0.2",
     "nuxt": "^3.4.0"
   },
@@ -23,6 +24,8 @@
     "@nuxtjs/dotenv": "^1.4.1",
     "@sendgrid/mail": "^7.7.0",
     "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^3.7.3",
     "sass": "^1.62.0"
   }

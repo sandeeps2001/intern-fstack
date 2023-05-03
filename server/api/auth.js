@@ -1,15 +1,22 @@
 import{dbc} from '~~/task-manager/mongodb.js'
+import {setCookie } from 'h3'
+import jwt from 'jsonwebtoken'
 export default defineEventHandler (async (credentials) =>{
     try{
         const s  = await dbc()
         let{e,p}= await readBody(credentials)
         if( s.password===p && s.email===e){
             console.log("password matched")
-            return true
-                }
-                console.log("false")
-                return false
-            } catch(error){
+            const token = jwt.sign({SAemail: e},"YOUR_SECRET_KEY");
+             setCookie(credentials,'supersession',token,{
+                httpOnly:true,
+                maxAge: 5 * 60 * 60,
+            })
+        return token
+            }
+         }
+          catch(error){
                 console.log(error)
+                return false
             } 
 })
