@@ -9,7 +9,9 @@ export default defineEventHandler(async (credentials) => {
     console.log(s, "val");
     if (s === true) {
       return true;
-    } else {
+    } 
+    else {
+       return false
     }
   } catch (error) {
     console.log(error);

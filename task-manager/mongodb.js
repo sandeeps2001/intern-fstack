@@ -1,13 +1,11 @@
 const { NULL } = require("sass");
+const { MongoClient, ObjectId } = require("mongodb");
+const connectionURL = process.env.NUXT_PRIVATE_DB_USER;
 //superadmin
 const dbc = async () => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const databaseName = "loyalytics";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
     const db = await client.db(databaseName);
     const s = await db
       .collection("cred")
@@ -20,32 +18,41 @@ const dbc = async () => {
 //signup
 const signuppost = async (e, p) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
+    let flag = false
     const databaseName = "loyalytics";
     const client = await MongoClient.connect(connectionURL, {
       useUnifiedTopology: true,
     });
-    const db = await client.db(databaseName);
+    let db = await client.db('acs');
+    const a = await db.listCollections().toArray();
+    a.forEach((element) => {
+      if(e === element.name){
+        flag = true
+      }
+    });
+    if(flag === true){
+    db = await client.db(databaseName);
     const res = await db.collection("test").insertOne({
       email: `${e}`,
       password: `${p}`,
     });
-    return true;
-  } catch (err) {
+    return true
+  }
+  else{
+    return false
+  }
+  }
+   catch (err) {
     console.log("err", err);
     return false;
   }
 };
+
 //login
 const logincheck = async (e, p) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const databaseName = "loyalytics";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
     const db = await client.db(databaseName);
     const lresult = await db
       .collection("test")
@@ -60,12 +67,8 @@ const logincheck = async (e, p) => {
 //create channel
 const createchannel = async (c, d, e) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const databaseName = "channel";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
     const db = await client.db(databaseName);
     const res = await db.collection(`${c}`).insertOne({
       channelname: `${c}`,
@@ -81,12 +84,8 @@ const createchannel = async (c, d, e) => {
 
 const fetchchannel = async (e) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const databaseName = "acs";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
     const db = await client.db(databaseName);
     var Mykeys = [];
     const a = await db
@@ -109,12 +108,8 @@ const fetchchannel = async (e) => {
 };
 const fetchchanneldata = async (c) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const databaseName = "channel";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
     const db = await client.db(databaseName);
     var Mykeys = [];
     const a = await db.collection(`${c}`);
@@ -127,14 +122,11 @@ const fetchchanneldata = async (c) => {
     return false;
   }
 };
+
 const allchannelnames = async (c) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const databaseName = "channel";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
     const db = await client.db(databaseName);
     var Mykeys = [];
     const a = await db.listCollections().toArray();
@@ -151,13 +143,9 @@ const allchannelnames = async (c) => {
 
 const fetchchannelmessage = async (c) => {
   try {
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     mes = [];
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
     const databaseName = "channel";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
     const db = await client.db("channel");
     const res = await db.collection(c).find({}).toArray();
     res.forEach((elm) => {
@@ -175,19 +163,15 @@ const fetchchannelmessage = async (c) => {
 
 const fetchchannelacs = async (cname, gmail) => {
   try {
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     let arr = [];
     let b = `${cname}`;
     let myobj = {
       _id: 0,
       [b]: 1,
     };
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017"; 
     const databaseName = "acs";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
-    const db = await client.db("acs");
+    const db = await client.db(databaseName);
     const res = await db
       .collection(`${gmail}`)
       .find({}, { projection: myobj })
@@ -210,12 +194,7 @@ const fetchchannelacs = async (cname, gmail) => {
 
 const messageupdate = async (oldvalue, newvalue, collection) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
-    const databaseName = "acs";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db("channel");
     const res = await db.collection(`${collection}`).updateOne(
       { message: oldvalue },
@@ -235,12 +214,7 @@ const messageupdate = async (oldvalue, newvalue, collection) => {
 
 const messagedelete = async (value, collection) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
-    const databaseName = "acs";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db("channel");
     const res = await db
       .collection(`${collection}`)
@@ -255,17 +229,11 @@ const messagedelete = async (value, collection) => {
 
 const messagecreatembd = async (messagedata, collection) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db("channel");
     console.log(collection);
     console.log(messagedata);
-    const res = await db
-      .collection(`${collection}`)
-      .insertOne({ message: `${messagedata}` });
+    await db.collection(`${collection}`).insertOne({ message: `${messagedata}` });
     return true;
   } catch (err) {
     console.log("err", err);
@@ -275,11 +243,7 @@ const messagecreatembd = async (messagedata, collection) => {
 
 const inviteuserswithacs = async (email, mainobj) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db("acs");
     const res = await db.collection(`${email}`).insertOne(mainobj);
     return true;
@@ -291,12 +255,8 @@ const inviteuserswithacs = async (email, mainobj) => {
 
 const allmails = async()=>{
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
+    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const databaseName = "acs";
-    const client = await MongoClient.connect(connectionURL, {
-      useUnifiedTopology: true,
-    });
     const db = await client.db(databaseName);
     let gmails = [];
     let mykeys = [];
@@ -316,80 +276,18 @@ const allmails = async()=>{
     }
     obj['mails']= gmails
     obj['access']= mykeys
-        //     console.log(doc)
-        //         if (mykeys.indexOf(doc) === -1) {
-        //           mykeys.push(doc);
-        //         }
-        //       }
-        //       mykeys.shift();
-
-        //     }
-        //     console.log(mykeys)
-        // }
-    
-    //   obj["email"] = arr;
-    //   obj["access"] = mykeys;
-    //   mainobj["data"] = obj;
-    //   mykeys = [];
-    //   gkeys.push(obj);
-    //   console.log(gkeys);
-    // });
     return obj
-
   }
 
 catch (err) {
     console.log("err", err);
     return false;
   }
-
-
-
 }
-// const getuserswithacs = async(c)=> {
-//     try{
-//         const {MongoClient, ObjectId} = require('mongodb')
-//         const connectionURL = 'mongodb://127.0.0.1:27017'
-//         const databaseName = 'acs';
-//         const client = await MongoClient.connect(connectionURL,{useUnifiedTopology:true});
-//         const db = await client.db(databaseName);
-//         let mainobj = {}
-//         let gmails = []
-//         let mykeys = []
-
-//      const a = await db.listCollections().toArray()
-//      a.forEach(element => {
-//                gmails.push(element.name)
-//      })
-//      gmails.map(async(arr) => {
-//         let obj= {}
-//      const b = await db.collection(arr).find().forEach(function(doc) {
-//         for(var key in doc) {
-//             if(mykeys.indexOf(key) === -1) {
-//                 mykeys.push(key);
-//                 mykeys.shift()
-//             }
-//         }
-//     })
-//     obj['email'] = arr
-//     obj['access'] = mykeys
-//     mainobj['data'] = obj
-//     mykeys = []
-//     console.log(mainobj)
-//         });
-//                 }
-//                 catch(err){
-//                     console.log('err',err)
-//                     return false
-//                 }
-
-//             }
 
 //edit user
 const edituseracs = async (email, mainobj) => {
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db("acs");
     await db.collection(`${email}`).drop()
@@ -405,10 +303,8 @@ const edituseracs = async (email, mainobj) => {
 
 const allchannel = async()=>{
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
-    const databaseName = "channel";
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
+    const databaseName = "channel";
     const db = await client.db(databaseName);
     let channelnames = [];
     let mainarr = []
@@ -432,24 +328,7 @@ for(let arr of channelnames){
         }
     }
     console.log(mainarr)
-        //     console.log(doc)
-        //         if (mykeys.indexOf(doc) === -1) {
-        //           mykeys.push(doc);
-        //         }
-        //       }
-        //       mykeys.shift();
-
-        //     }
-        //     console.log(mykeys)
-        // }
-    
-    //   obj["email"] = arr;
-    //   obj["access"] = mykeys;
-    //   mainobj["data"] = obj;
-    //   mykeys = [];
-    //   gkeys.push(obj);
-    //   console.log(gkeys);
-    // });
+       
     return mainarr
 
   }
@@ -470,8 +349,6 @@ const deletechannel = async (channelname) => {
   };
  let gmails = []
   try {
-    const { MongoClient, ObjectId } = require("mongodb");
-    const connectionURL = "mongodb://127.0.0.1:27017";
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     let db = await client.db("channel");
     await db.collection(`${channelname}`).drop()
@@ -492,8 +369,7 @@ const deletechannel = async (channelname) => {
 
 
 
-module.exports = {
-  dbc,
+module.exports = {  dbc,
   signuppost,
   logincheck,
   createchannel,

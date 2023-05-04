@@ -6,6 +6,7 @@ let {data : cook } = await useFetch('/api/cookiegetter',{
     return true
     }
     else{
+        navigateTo('/')
         return false
     }
     // let router = useRouter()

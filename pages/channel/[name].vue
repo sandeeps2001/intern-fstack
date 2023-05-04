@@ -1,8 +1,16 @@
 <script setup>
+let d = false
 let {data : cook } = await useFetch('/api/logincookiegetter',{
      method: 'GET', 
       })
-const gemail = cook.value.loginemail 
+if(cook.value.loginemail){
+d = true
+}
+else{
+navigateTo('/login')
+}
+
+let gemail = cook.value.loginemail 
 console.log(gemail)
 const router = useRouter()
 let editvalue = ref('')
@@ -123,17 +131,25 @@ console.log("post not created")
 createpostemodeal.value = false
 }
 }
+const logoutfunction = async()=>{
+    let {data : cook } = await useFetch('/api/logout',{
+     method: 'GET', 
+      })
+      if(cook.value){
+        navigateTo('/login')
+      }
 
-
+}
 
 </script>
 <template>
+    <button class = "logout" @click="logoutfunction()">LOGOUT</button>
     <div v-if="writter">
     <button>CREATE POST</button>
     </div>
     <div v-else>
         <div v-show="!emodal">
-    <h1>channel {{ c }} {{ postvalue }}</h1>
+    <h1>channel {{ c }}</h1>
     <button v-show="edit" @click="createpostmodal()">create post</button> 
     <div v-show = "read" class="messages" v-for="d in res">
         <h3>{{d}}</h3>
@@ -164,6 +180,9 @@ height : 100px;
 border: 2px solid black;
 }
 
+.logout{
+    float: right;
+}
 .emodalc{
     background-color: blue;
     margin-left: 700px;

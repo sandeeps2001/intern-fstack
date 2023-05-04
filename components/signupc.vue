@@ -13,7 +13,7 @@ if (res === true){
     navigateTo('login/')
 }
 if(res === false) {
-    alert('enter all credentials');
+    alert('invalid user');
 }
 }
 </script>

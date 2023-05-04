@@ -7,7 +7,7 @@ export default defineEventHandler((event) => {
     // return { cookies }
     const token =  getCookie(event,'supersession')
     console.log(token)
-    const data =  jwt.verify(token,"YOUR_SECRET_KEY");
+    const data =  jwt.verify(token,process.env.NUXT_PRIVATE_SECRETKEY);
     console.log(data)
     if(data){
     return data
