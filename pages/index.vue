@@ -23,7 +23,7 @@
    })
    console.log(res.value)
    if (res){
-       navigateTo('/superadmin/second/')
+       navigateTo('/superadmin/inviteusers/')
    }
    else{
        navigateTo('/')

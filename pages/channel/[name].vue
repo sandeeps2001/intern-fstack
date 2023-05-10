@@ -1,35 +1,34 @@
 <script setup>
-let d = false
-let {data : cook } = await useFetch('/api/logincookiegetter',{
+let authentication = false
+let {data : cookie } = await useFetch('/api/logincookiegetter',{
      method: 'GET', 
       })
-if(cook.value.loginemail){
-d = true
+if(cookie.value.loginemail){
+    authentication = true
 }
 else{
 navigateTo('/login')
 }
 
-let gemail = cook.value.loginemail 
-console.log(gemail)
+let LoggedInEmail = cookie.value.loginemail 
 const router = useRouter()
-let editvalue = ref('')
+let Editmessage = ref('')
 let read = ref('')
 let  edit = ref('')
 let  del = ref('')
 let writter = ref('')
-let emodal = ref('')
+let EditMessageModal = ref('')
 let datachange = ref('')
 let createpostemodeal= ref('')
-let postvalue = ref('')
-const k = router.currentRoute.value.params
-const c = k.name  
+let PostNewmessage = ref('')
+const routeURL = router.currentRoute.value.params
+const ChannelName = routeURL.name  
 console.log("inside dynamic")
 let acs = await $fetch('/api/accesschannel', {
     method: 'POST',
     body:{
-       cname : c,
-       gmail : gemail
+       cname : ChannelName,
+       gmail : LoggedInEmail
     }
 });
  
@@ -47,36 +46,36 @@ acs.forEach(element => {
 });
 
 
-let res = await $fetch('/api/channelmsg', {
+let WholeChannelMessage = await $fetch('/api/channelmsg', {
     method: 'POST',
     body:{
-       cname : c
+       cname : ChannelName
     }
 });
 if(!read && edit && del){
   writter.value = true
 }
-function editmodal(d){
-emodal.value = true
-datachange.value = d
+function editmodal(message){
+EditMessageModal.value = true
+datachange.value = message
 }
 
 const editmodalupdate = async ()=>{
-if (!editvalue.value){
+if (!Editmessage.value){
 return 
 }
 let update = await $fetch('/api/messageupdate', {
     method: 'POST',
     body:{
         oldvalue : datachange.value,
-        newvalue : editvalue.value,
-        collection: c
+        newvalue : Editmessage.value,
+        collection: ChannelName
     }
 });
 if (update === true){
     console.log("changes succesfull")
-    editvalue.value = null
-    emodal.value = false
+    Editmessage.value = null
+    EditMessageModal.value = false
     window.location.reload()
 
 }
@@ -86,12 +85,12 @@ else{
 }
 
 
-const dlefunc = async (d)=>{
+const deleteFunction = async (message)=>{
 let del = await $fetch('/api/messagedelete', {
     method: 'POST',
     body:{
-        value : d,
-        collection: c
+        value : message,
+        collection: ChannelName
     }
 });
 if (del === true){
@@ -109,16 +108,16 @@ createpostemodeal.value = true
 
 
 const createpost = async()=>{
-    console.log(postvalue.value)
-    if(!postvalue.value){
+    console.log(PostNewmessage.value)
+    if(!PostNewmessage.value){
         createpostemodeal.value = false
         return
     }
     let create = await $fetch('/api/messagecreate', {
     method: 'POST',
     body:{
-        messagedata : postvalue.value,
-        collection: c
+        messagedata : PostNewmessage.value,
+        collection: ChannelName
     }
 });
 if(create === true){
@@ -132,10 +131,10 @@ createpostemodeal.value = false
 }
 }
 const logoutfunction = async()=>{
-    let {data : cook } = await useFetch('/api/logout',{
+    let {data : cookie } = await useFetch('/api/logout',{
      method: 'GET', 
       })
-      if(cook.value){
+      if(cookie.value){
         navigateTo('/login')
       }
 
@@ -144,31 +143,32 @@ const logoutfunction = async()=>{
 </script>
 <template>
     <button class = "logout" @click="logoutfunction()">LOGOUT</button>
+    <div v-show="authentication">
     <div v-if="writter">
     <button>CREATE POST</button>
     </div>
     <div v-else>
-        <div v-show="!emodal">
-    <h1>channel {{ c }}</h1>
+        <div v-show="!EditMessageModal">
+    <h1>channel {{ ChannelName }}</h1>
     <button v-show="edit" @click="createpostmodal()">create post</button> 
-    <div v-show = "read" class="messages" v-for="d in res">
-        <h3>{{d}}</h3>
-        <div v-show="!emodal">
-    <button v-show="edit" @click ="editmodal(d)"> edit </button>
-    <button v-show="del" @click ="dlefunc(d)"> delete </button>
+    <div v-show = "read" class="messages" v-for="message in WholeChannelMessage">
+        <h3>{{message}}</h3>
+        <div v-show="!EditMessageModal">
+    <button v-show="edit" @click ="editmodal(message)"> edit </button>
+    <button v-show="del" @click ="deleteFunction(message)"> delete </button>
     </div>
     </div>
         </div>
-    <div class = "emodalc" v-show="emodal">
-  <input class = "inp"  type="text" placeholder="type here...." v-model="editvalue">
+    <div class = "emodalc" v-show="EditMessageModal">
+  <input class = "inp"  type="text" placeholder="type here...." v-model="Editmessage">
   <br><br><button class="submit" @click = "editmodalupdate()"> submit </button>
     </div>
     <div class = "writepost" v-show="createpostemodeal">
-  <input class = "inputpost"  type="text" placeholder="type here...." v-model="postvalue">
+  <input class = "inputpost"  type="text" placeholder="type here...." v-model="PostNewmessage">
   <br><br><button class="submitpost" @click = "createpost()"> submit </button>
     </div>
     </div>
-    
+    </div>
 </template>
 
 

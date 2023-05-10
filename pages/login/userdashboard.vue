@@ -1,31 +1,32 @@
 <script setup>
-let d = false
-let {data : cook } = await useFetch('/api/logincookiegetter',{
+let authentication = false
+let Usergmail
+let {data : cookie } = await useFetch('/api/logincookiegetter',{
      method: 'GET', 
       })
-      if(cook.value.loginemail){
-       d = true
+      if(cookie.value.loginemail){
+        authentication = true
+     Usergmail = cookie.value.loginemail
       }
       else{
         navigateTo('/login')
       }
-      console.log(cook.value)
-const gmail = cook.value.loginemail
+
 const router = useRouter()
 function fetching(s){
     navigateTo(`/channel/${s}`)
 }
-let res = await $fetch('/api/fetchchannels', {
+let availablechannels = await $fetch('/api/fetchchannels', {
     method: 'POST',
     body:{
-       e : gmail
+       e : Usergmail
     }, 
 })
 const logoutfunction = async()=>{
-    let {data : cook } = await useFetch('/api/logout',{
+    let {data : cookie } = await useFetch('/api/logout',{
      method: 'GET', 
       })
-      if(cook.value){
+      if(cookie.value){
         navigateTo('/login')
       }
 
@@ -33,13 +34,13 @@ const logoutfunction = async()=>{
 </script>  
 
 <template>
-    <div v-if="d">
+    <div v-if="authentication">
         <button class = "logout" @click="logoutfunction()">LOGOUT</button>
        <p class = p> AVAILABLE CHANNELS </p>
     </div>
-    <button class = "channels" v-for="size in res" @click="fetching(size)">
-        <div class = "cd">
-        <h1>{{size}}</h1>
+    <button class = "channels" v-for="channel in availablechannels" @click="fetching(channel)">
+        <div class = "channellayout">
+        <h1>{{channel}}</h1>
         </div>
         </button> 
     </template>
@@ -57,7 +58,7 @@ const logoutfunction = async()=>{
 .p{
     font-size :xx-large;
 }
-.cd{
+.channellayout{
     width:200px;
     height: 200px;
     

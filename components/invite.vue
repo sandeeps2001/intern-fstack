@@ -4,7 +4,7 @@ const ocb = useCookie('ocb')
 let access = []
 let postaccess = []
 let objectarray = {}
-let mainarr = []
+let invitedusers = ref([])
 const on = useCookie('on')
 const editusers = useCookie('editusers')
 const iu = useCookie('iu')
@@ -78,7 +78,7 @@ uemails.forEach((elm , index)=> {
     objectarray = {}
 objectarray['email'] = elm
 objectarray['access'] = postaccess[index]
-mainarr.push(objectarray)
+invitedusers.value.push(objectarray)
 })
 
 
@@ -263,7 +263,7 @@ if(afteredit === true){
     <th><h2>Access</h2></th>
     <th><h2>Action</h2></th>   
   </tr>
-  <tr v-for="i in mainarr">
+  <tr v-for="i in invitedusers">
     <td>{{i.email}}</td>
     <td>{{i.access}}</td>
     <td><button class = "inviteuserseditbutton" @click="editaccess(i.email)" >edit</button></td>
