@@ -27,10 +27,9 @@ let triggermodal = ref('')
 let {data : allchannel , refresh } = await useFetch('/api/allchannels',{
     method: 'GET', 
     })
-for(let o = 0 ; o < allchannel.value.length ; o++){
-    delete allchannel.value[o]._id
-}
-let allchannelarray = ref(allchannel.value.filter(value => Object.keys(value).length !== 0));
+    console.log(allchannel.value)
+
+let allchannelarray = ref(allchannel.value)
 const createchannel = ()=>{
 triggermodal.value  =  true
 } 
@@ -51,7 +50,7 @@ const da = new Date();
 let date = da.getDate() 
 let month = months[d.getMonth()];
 const fdate = `${date}`+ 'th' +' ' + `${month}`
-let bus = await $fetch('/api/newchannel', {
+let resp = await $fetch('/api/newchannel', {
     method: 'POST',
     body:{
        c : cname.value,
@@ -60,10 +59,14 @@ let bus = await $fetch('/api/newchannel', {
     },
     
 })
-if (bus === true){
+console.log(resp , "fromcreatingchannel")
+if (resp === true){
     console.log("channel created")
-    triggermodal.value = false
     window.location.reload()
+    triggermodal.value = false
+}
+else if(resp === "alreadyExists"){ 
+    alert('duplicate channel name')
 }
 else{
     console.log("failed")

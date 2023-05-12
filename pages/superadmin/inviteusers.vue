@@ -42,8 +42,6 @@ let firstinviteuser = ref('')
   if(!email.value){
     return
 }
-firstinviteuser.value = false
-triggermodal.value = false
 let dress = await $fetch('/api/inviteuserswithacs', {
     method: 'POST',
     body:{
@@ -56,6 +54,8 @@ let dress = await $fetch('/api/inviteuserswithacs', {
 if (dress === true){
     console.log("channel Access created")
     window.location.reload()
+    firstinviteuser.value = false
+    triggermodal.value = false
 }
 else{
     console.log("failed")
@@ -64,10 +64,10 @@ else{
 
 
  const editchannelemail = ref('')
- function editUserAccess(editchannel){
+ function editUserAccess(editchannelemailID){
  editusers.value = true
  triggermodal.value = true
- editchannelemail.value = editchannel
+ editchannelemail.value = editchannelemailID
  }
 let {data : WholeUserData , refresh : refresh2} = await useFetch('/api/allmails', {
      method: 'GET', 
@@ -126,8 +126,8 @@ let afteredit = await $fetch('/api/editusersacs', {
 })
 if (afteredit === true){
     console.log("channel edit successfull")
-    editusers.value = false
     window.location.reload()
+    editusers.value = false
 }
 else{
     console.log("failed")
@@ -162,7 +162,7 @@ const logoutfunction = async()=>{
      <table>
      <tr>
      <th><h2>Email</h2></th>
-     <th><h2>UnformattedUserAccess</h2></th>
+     <th><h2>Channel Access</h2></th>
      <th><h2>Action</h2></th>   
    </tr>
    <tr v-for="i in invitedusers">

@@ -36,6 +36,8 @@ export default defineEventHandler(async (credentials) => {
         mainobj[cc] = j;
       }
     });
+    mainobj['email'] = e
+    console.log(mainobj, 'fromeditapicall')
     const s = await edituseracs(e, mainobj);
     if (s === true) {
       console.log("channel access inserted");

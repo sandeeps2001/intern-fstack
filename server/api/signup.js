@@ -5,15 +5,11 @@ export default defineEventHandler(async (credentials) => {
     if (!e || !p) {
       return false;
     }
-    const s = await signuppost(e, p);
-    console.log(s, "val");
-    if (s === true) {
-      return true;
-    } 
-    else {
-       return false
+    const InsertingCredentialsIntoDatabase = await signuppost(e, p);
+    console.log(InsertingCredentialsIntoDatabase, "fromsignupAPI");
+    return InsertingCredentialsIntoDatabase
     }
-  } catch (error) {
+   catch (error) {
     console.log(error);
   }
 });

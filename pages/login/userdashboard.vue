@@ -13,8 +13,8 @@ let {data : cookie } = await useFetch('/api/logincookiegetter',{
       }
 
 const router = useRouter()
-function fetching(s){
-    navigateTo(`/channel/${s}`)
+function fetching(channelname){
+    navigateTo(`/channel/${channelname}`)
 }
 let availablechannels = await $fetch('/api/fetchchannels', {
     method: 'POST',

@@ -7,13 +7,10 @@ export default defineEventHandler(async (credentials) => {
       return false;
     }
     const s = await createchannel(c, d, e);
-    console.log(s, "val");
-    if (s === true) {
-      return true;
-    } else {
-      return false;
-    }
+    console.log(s , "fromchannelapicall")
+    return s
   } catch (error) {
     console.log(error);
+    return false
   }
 });

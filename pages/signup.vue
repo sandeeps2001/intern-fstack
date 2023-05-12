@@ -2,18 +2,22 @@
 const email = ref('');
 const password = ref('');
 const login = async () =>{
-let res = await $fetch('/api/signup',{
+let SignUpApiResponse = await $fetch('/api/signup',{
     method: 'POST',
     body:{
        e : email.value,
        p : password.value
     }
 })
-if (res === true){
+if (SignUpApiResponse === true){
     navigateTo('login/')
 }
-if(res === false) {
+if(SignUpApiResponse === false) {
     alert('invalid user');
+}
+if(SignUpApiResponse === "alreadysignedup")
+{
+    alert('user already signedup , please continue with login')
 }
 }
 </script>

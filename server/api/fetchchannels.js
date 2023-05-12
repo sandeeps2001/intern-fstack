@@ -6,8 +6,7 @@ export default defineEventHandler(async (credentials) => {
       console.log("email not parsed");
       return false;
     }
-    var s = [];
-    s = await fetchchannel(e);
+    let s = await fetchchannel(e);
     return s;
   } catch (error) {
     console.log(error);

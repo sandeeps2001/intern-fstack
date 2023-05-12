@@ -36,7 +36,9 @@ export default defineEventHandler(async (credentials) => {
         mainobj[cc] = j;
       }
     });
-    const s = await inviteuserswithacs(e, mainobj);
+    mainobj['email'] = e
+    console.log(mainobj)
+    const s = await inviteuserswithacs(mainobj);
     if (s === true) {
       console.log("channel access inserted");
       return true;

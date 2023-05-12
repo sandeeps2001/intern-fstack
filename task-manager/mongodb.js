@@ -1,15 +1,15 @@
 const { NULL } = require("sass");
 const { MongoClient, ObjectId } = require("mongodb");
 const connectionURL = process.env.NUXT_PRIVATE_DB_USER;
+const databaseName = "internproject";
 //superadmin
 const dbc = async () => {
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const databaseName = "loyalytics";
     const db = await client.db(databaseName);
     const s = await db
-      .collection("cred")
-      .findOne({ _id: new ObjectId("6436abb0f4a169a7d4499ace") });
+      .collection("superadmin")
+      .findOne({ _id: new ObjectId("6436ad4ac6c5059af04f46e3") });
     return s;
   } catch (err) {
     console.log("err", err);
@@ -18,29 +18,37 @@ const dbc = async () => {
 //signup
 const signuppost = async (e, p) => {
   try {
+    let signal = "alreadysignedup"
     let flag = false
-    const databaseName = "loyalytics";
+    let flag2 = true
     const client = await MongoClient.connect(connectionURL, {
       useUnifiedTopology: true,
     });
-    let db = await client.db('acs');
-    const a = await db.listCollections().toArray();
-    a.forEach((element) => {
-      if(e === element.name){
+    let db = await client.db(databaseName);
+    const checkifauthorized = await db.collection('useraccess').find({}).toArray();
+    checkifauthorized .forEach((element) => {
+      if(e === element.email){
         flag = true
       }
     });
-    if(flag === true){
-    db = await client.db(databaseName);
-    const res = await db.collection("test").insertOne({
+    const checkifUseralreadyExists  = await db.collection('logincred').find({}).toArray();
+    console.log(checkifUseralreadyExists)
+    checkifUseralreadyExists.forEach((element) => {
+      if(e === element.email){
+        flag2 = false
+      }
+    });
+    if(flag === true && flag2 === true){
+    await db.collection("logincred").insertOne({
       email: `${e}`,
       password: `${p}`,
     });
     return true
   }
-  else{
-    return false
+  else if(flag === true && flag2 === false){
+    return signal
   }
+  return false
   }
    catch (err) {
     console.log("err", err);
@@ -52,10 +60,9 @@ const signuppost = async (e, p) => {
 const logincheck = async (e, p) => {
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const databaseName = "loyalytics";
     const db = await client.db(databaseName);
     const lresult = await db
-      .collection("test")
+      .collection("logincred")
       .findOne({ email: `${e}`, password: `${p}` });
     console.log(lresult);
     return lresult;
@@ -67,73 +74,70 @@ const logincheck = async (e, p) => {
 //create channel
 const createchannel = async (c, d, e) => {
   try {
+    flag = true
+    const signal = "alreadyExists"
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const databaseName = "channel";
     const db = await client.db(databaseName);
-    const res = await db.collection(`${c}`).insertOne({
-      channelname: `${c}`,
-      email: `${e}`,
-      date: `${d}`,
+    const res = await db.collection('channelmsg').find({}).toArray()
+    res.forEach(elm=>{
+      if(elm.channelname === c){
+         flag = false
+      }
+    })
+    if(flag === false){
+      return signal
+    }
+    await db.collection('channelmsg').insertOne({
+      channelname: c,
+      email: e,
+      date: d,
     });
-    return true;
+    return true
   } catch (err) {
     console.log("err", err);
-    return false;
+    return signal
   }
 };
 
+//userdashboardchannelnamedisplay
 const fetchchannel = async (e) => {
   try {
-    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const databaseName = "acs";
-    const db = await client.db(databaseName);
-    var Mykeys = [];
-    const a = await db
-      .collection(e)
-      .find()
-      .forEach(function (doc) {
-        for (var key in doc) {
-          if (Mykeys.indexOf(key) === -1) {
-            Mykeys.push(key);
-          }
-        }
-      });
-    Mykeys.shift();
-    console.log(Mykeys);
-    return Mykeys;
-  } catch (err) {
-    console.log("err", err);
-    return false;
-  }
-};
-const fetchchanneldata = async (c) => {
-  try {
-    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const databaseName = "channel";
-    const db = await client.db(databaseName);
-    var Mykeys = [];
-    const a = await db.collection(`${c}`);
-    a.forEach((element) => {
-      Mykeys.push(element.name);
-    });
-    return Mykeys;
-  } catch (err) {
+    let channelnames
+  const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
+  const db = await client.db(databaseName);
+  var Mykeys = [];
+  console.log(e)
+  const a = await db.collection('useraccess').find({email : e}).toArray()
+  console.log(a , "raw")
+  a.forEach(elm=>{
+    delete elm._id 
+    delete elm.email
+  })
+  a.forEach(elm=>{
+    channelnames = Object.keys(elm) 
+  })
+console.log(channelnames)
+return channelnames
+} catch (err) {
     console.log("err", err);
     return false;
   }
 };
 
+//superadminallchannelsfetch
 const allchannelnames = async (c) => {
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const databaseName = "channel";
     const db = await client.db(databaseName);
     var Mykeys = [];
-    const a = await db.listCollections().toArray();
+    const a = await db.collection('channelmsg').find({}).toArray();
     a.forEach((element) => {
-      Mykeys.push(element.name);
+      if(element.channelname){
+        Mykeys.push(element.channelname)
+      }
     });
     Mykeys.sort();
+    console.log(Mykeys, 'fromnewdatabase')
     return Mykeys;
   } catch (err) {
     console.log("err", err);
@@ -145,15 +149,14 @@ const fetchchannelmessage = async (c) => {
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     mes = [];
-    const databaseName = "channel";
-    const db = await client.db("channel");
-    const res = await db.collection(c).find({}).toArray();
+    const db = await client.db(databaseName);
+    const res = await db.collection('channelmsg').find({channel : c}).toArray();
     res.forEach((elm) => {
       if (elm.message) {
         mes.push(elm.message);
       }
     });
-    console.log(mes);
+    console.log(mes ,"frombd");
     return mes;
   } catch (err) {
     console.log("err", err);
@@ -163,21 +166,18 @@ const fetchchannelmessage = async (c) => {
 
 const fetchchannelacs = async (cname, gmail) => {
   try {
+    let obj = {
+      [cname] : ""
+    }
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     let arr = [];
-    let b = `${cname}`;
-    let myobj = {
-      _id: 0,
-      [b]: 1,
-    };
-    const databaseName = "acs";
     const db = await client.db(databaseName);
-    const res = await db
-      .collection(`${gmail}`)
-      .find({}, { projection: myobj })
-      .toArray();
+    const res = await db.collection('useraccess').find({email : gmail}).toArray();
     res.forEach((ele) => {
-      let s = Object.values(ele);
+      delete ele.email
+      delete ele._id
+      let s = ele[cname];
+      console.log(s,'0check')
       let g = s.toString();
       let l = g.split(" ");
       l.forEach((element) => {
@@ -195,8 +195,8 @@ const fetchchannelacs = async (cname, gmail) => {
 const messageupdate = async (oldvalue, newvalue, collection) => {
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const db = await client.db("channel");
-    const res = await db.collection(`${collection}`).updateOne(
+    const db = await client.db(databaseName);
+    const res = await db.collection('channelmsg').updateOne(
       { message: oldvalue },
       {
         $set: {
@@ -215,9 +215,9 @@ const messageupdate = async (oldvalue, newvalue, collection) => {
 const messagedelete = async (value, collection) => {
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const db = await client.db("channel");
+    const db = await client.db(databaseName);
     const res = await db
-      .collection(`${collection}`)
+      .collection('channelmsg')
       .deleteOne({ message: value });
     console.log("field deleted");
     return true;
@@ -230,10 +230,8 @@ const messagedelete = async (value, collection) => {
 const messagecreatembd = async (messagedata, collection) => {
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const db = await client.db("channel");
-    console.log(collection);
-    console.log(messagedata);
-    await db.collection(`${collection}`).insertOne({ message: `${messagedata}` });
+    const db = await client.db(databaseName);
+    await db.collection('channelmsg').insertOne({channel : collection, message: messagedata });
     return true;
   } catch (err) {
     console.log("err", err);
@@ -241,11 +239,12 @@ const messagecreatembd = async (messagedata, collection) => {
   }
 };
 
-const inviteuserswithacs = async (email, mainobj) => {
+const inviteuserswithacs = async (mainobj) => {
   try {
+    console.log(mainobj)
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const db = await client.db("acs");
-    const res = await db.collection(`${email}`).insertOne(mainobj);
+    const db = await client.db("internproject");
+    const res = await db.collection('useraccess').insertOne(mainobj);
     return true;
   } catch (err) {
     console.log("err", err);
@@ -253,10 +252,10 @@ const inviteuserswithacs = async (email, mainobj) => {
   }
 };
 
+//for getting all the emails with access in inviteusers
 const allmails = async()=>{
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const databaseName = "acs";
     const db = await client.db(databaseName);
     let gmails = [];
     let mykeys = [];
@@ -264,18 +263,20 @@ const allmails = async()=>{
       mails : [],
       access : []
   };
-    const a = await db.listCollections().toArray();
+    const a = await db.collection('useraccess').find({}).toArray();
     a.forEach(async (element) => {
-      gmails.push(element.name);
+      gmails.push(element.email);
     });
     for(let arr of gmails){
-      const b = await db.collection(arr).find().toArray()
+      const b = await db.collection('useraccess').find({email : arr}).toArray()
         for(let doc of b ){
+          delete doc.email
             mykeys.push(doc)
         }
     }
     obj['mails']= gmails
     obj['access']= mykeys
+    console.log(obj , 'romdb')
     return obj
   }
 
@@ -286,12 +287,13 @@ catch (err) {
 }
 
 //edit user
-const edituseracs = async (email, mainobj) => {
+const edituseracs = async (emailId, mainobj) => {
   try {
+    console.log(mainobj,'fromedituserdb')
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const db = await client.db("acs");
-    await db.collection(`${email}`).drop()
-    await db.collection(`${email}`).insertOne(mainobj)
+    const db = await client.db(databaseName);
+    await db.collection('useraccess').deleteOne({email : emailId})
+    await db.collection('useraccess').insertOne(mainobj)
     return true
   } catch (err) {
     console.log("err", err);
@@ -300,23 +302,25 @@ const edituseracs = async (email, mainobj) => {
 };
 
 
-
+//get all channel and created by details
 const allchannel = async()=>{
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const databaseName = "channel";
     const db = await client.db(databaseName);
     let channelnames = [];
     let mainarr = []
-    const a = await db.listCollections().toArray();
+    let obj = {}
+    const a = await db.collection('channelmsg').find({}).toArray();
     a.forEach(async (element) => {
-      channelnames.push(element.name);
+      if(element.channelname){
+      channelnames.push(element.channelname);
+      }
     });
-    console.log(channelnames)
+    console.log(channelnames , "romb")
 for(let arr of channelnames){
-  const b = await db.collection(arr).find().toArray()
+  const b = await db.collection('channelmsg').find({channelname : arr}).toArray()
     for(let doc of b ){
-      let obj = {
+     obj = {
         channelname : '',
         email : '',
         date : ''
@@ -324,13 +328,11 @@ for(let arr of channelnames){
         obj.channelname = doc.channelname,
         obj.email = doc.email,
         obj.date = doc.date
-     mainarr.push(obj)
         }
+        mainarr.push(obj)
     }
-    console.log(mainarr)
-       
+    console.log(mainarr, "checckingdb")
     return mainarr
-
   }
 
 catch (err) {
@@ -342,24 +344,17 @@ catch (err) {
 
 }
 
-const deletechannel = async (channelname) => {
-  let b = `${channelname}`;
+const deletechannel = async (channeln) => {
+  let b = `${channeln}`;
   let myobj = {
     [b]: "",
   };
  let gmails = []
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    let db = await client.db("channel");
-    await db.collection(`${channelname}`).drop()
-    db = await client.db("acs");
-    const d = await db.listCollections().toArray();
-    d.forEach(async (element) => {
-      gmails.push(element.name);
-    });
-    for(let doc of gmails){
-      await db.collection(`${doc}`).updateOne({},{$unset : myobj})
-    }
+    let db = await client.db(databaseName);
+    await db.collection('channelmsg').updateMany({channelname : channeln},{$unset : {channelname:"", email:"", date:""}})
+    await db.collection('useraccess').updateMany({},{$unset :myobj})
     return true
   } catch (err) {
     console.log("err", err);
@@ -374,7 +369,6 @@ module.exports = {  dbc,
   logincheck,
   createchannel,
   fetchchannel,
-  fetchchanneldata,
   fetchchannelmessage,
   fetchchannelacs,
   messageupdate,
