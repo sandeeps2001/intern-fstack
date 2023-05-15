@@ -1,6 +1,6 @@
 <script setup>
 let authentication = false
-let {data : cookie } = await useFetch('/api/logincookiegetter',{
+let {data : cookie } = await useFetch('/api/userget/logincookiegetter',{
      method: 'GET', 
       })
 if(cookie.value.loginemail){
@@ -24,7 +24,7 @@ let PostNewmessage = ref('')
 const routeURL = router.currentRoute.value.params
 const ChannelName = routeURL.name  
 console.log("inside dynamic")
-let acs = await $fetch('/api/accesschannel', {
+let acs = await $fetch('/api/fetch/accesschannel', {
     method: 'POST',
     body:{
        cname : ChannelName,
@@ -46,7 +46,7 @@ acs.forEach(element => {
 });
 
 
-let WholeChannelMessage = await $fetch('/api/channelmsg', {
+let WholeChannelMessage = await $fetch('/api/create/channelmsg', {
     method: 'POST',
     body:{
        cname : ChannelName
@@ -64,7 +64,7 @@ const editmodalupdate = async ()=>{
 if (!Editmessage.value){
 return 
 }
-let update = await $fetch('/api/messageupdate', {
+let update = await $fetch('/api/edit/messageupdate', {
     method: 'POST',
     body:{
         oldvalue : datachange.value,
@@ -86,7 +86,7 @@ else{
 
 
 const deleteFunction = async (message)=>{
-let del = await $fetch('/api/messagedelete', {
+let del = await $fetch('/api/delete/messagedelete', {
     method: 'POST',
     body:{
         value : message,
@@ -113,7 +113,7 @@ const createpost = async()=>{
         createpostemodeal.value = false
         return
     }
-    let create = await $fetch('/api/messagecreate', {
+    let create = await $fetch('/api/create/messagecreate', {
     method: 'POST',
     body:{
         messagedata : PostNewmessage.value,
@@ -131,7 +131,7 @@ createpostemodeal.value = false
 }
 }
 const logoutfunction = async()=>{
-    let {data : cookie } = await useFetch('/api/logout',{
+    let {data : cookie } = await useFetch('/api/authhandle/logout',{
      method: 'GET', 
       })
       if(cookie.value){

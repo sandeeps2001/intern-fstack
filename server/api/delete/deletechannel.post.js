@@ -1,15 +1,18 @@
 import{deletechannel} from '~~/task-manager/mongodb.js'
 export default defineEventHandler (async (credentials) =>{
     try{
-        let{channel}= await readBody(credentials)
-        console.log(channel)
-        if (!channel)
+        let { channelname } = await readBody(credentials);
+    //     const router = useRouter()
+    // const routeURL = router.currentRoute.value.params
+    // console.log(routeURL)
+
+        if (!channelname)
         {
             console.log("channel not parsed");
             return false
         }
-         let s  = await deletechannel(channel)
-             return true
+         const s = await deletechannel(channelname)
+             return s
             } 
             catch(error){
                 console.log(error)

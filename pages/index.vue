@@ -14,7 +14,7 @@
    const email = ref('');
    const password = ref('');
    const login = async () =>{
-   let {data : res} = await useFetch('/api/auth',{
+   let {data : res} = await useFetch('/api/authhandle/auth',{
        method: 'POST',
        body:{
           e : email.value,

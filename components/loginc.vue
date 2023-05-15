@@ -7,7 +7,7 @@ const login = async () =>{
         alert('enter all credentials required')
         return
     }
-let res = await $fetch('/api/loginserver', {
+let res = await $fetch('/api/authhandle/loginserver', {
     method: 'POST',
     body:{
        e : email.value,

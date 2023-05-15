@@ -2,7 +2,7 @@
 const email = ref('');
 const password = ref('');
 const login = async () =>{
-let SignUpApiResponse = await $fetch('/api/signup',{
+let SignUpApiResponse = await $fetch('/api/authhandle/signup',{
     method: 'POST',
     body:{
        e : email.value,

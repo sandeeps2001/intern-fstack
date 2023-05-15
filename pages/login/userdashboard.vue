@@ -1,7 +1,7 @@
 <script setup>
 let authentication = false
 let Usergmail
-let {data : cookie } = await useFetch('/api/logincookiegetter',{
+let {data : cookie } = await useFetch('/api/userget/logincookiegetter',{
      method: 'GET', 
       })
       if(cookie.value.loginemail){
@@ -16,14 +16,14 @@ const router = useRouter()
 function fetching(channelname){
     navigateTo(`/channel/${channelname}`)
 }
-let availablechannels = await $fetch('/api/fetchchannels', {
+let availablechannels = await $fetch('/api/userpost/fetchchannels', {
     method: 'POST',
     body:{
        e : Usergmail
     }, 
 })
 const logoutfunction = async()=>{
-    let {data : cookie } = await useFetch('/api/logout',{
+    let {data : cookie } = await useFetch('/api/userget/logout',{
      method: 'GET', 
       })
       if(cookie.value){

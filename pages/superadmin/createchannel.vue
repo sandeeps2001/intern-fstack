@@ -1,7 +1,7 @@
 <script setup>
 let authenticated
 let gmail
-let {data : cookie } = await useFetch('/api/cookiegetter',{
+let {data : cookie } = await useFetch('/api/authhandle/cookiegetter',{
      method: 'GET', 
       })
       if(cookie.value.SAemail){
@@ -12,19 +12,20 @@ let {data : cookie } = await useFetch('/api/cookiegetter',{
         navigateTo('/')
       }
 const deletechannel = async(chname)=>{
-    let afterdelete = await $fetch('/api/deletechannel', {
+    let {data : afterdelete} = await useFetch('/api/delete/deletechannel', {
     method: 'POST',
     body:{
-       channel : chname
+channelname : chname
     },
 })
-if(afterdelete === true){
+
+if(afterdelete.value === true){
     window.location.reload()
 }
 }
 
 let triggermodal = ref('')
-let {data : allchannel , refresh } = await useFetch('/api/allchannels',{
+let {data : allchannel , refresh } = await useFetch('/api/fetch/allchannels',{
     method: 'GET', 
     })
     console.log(allchannel.value)
@@ -50,7 +51,7 @@ const da = new Date();
 let date = da.getDate() 
 let month = months[d.getMonth()];
 const fdate = `${date}`+ 'th' +' ' + `${month}`
-let resp = await $fetch('/api/newchannel', {
+let resp = await $fetch('/api/create/newchannel', {
     method: 'POST',
     body:{
        c : cname.value,
@@ -74,7 +75,7 @@ else{
 }
 }
 const logoutfunction = async()=>{
-    let {data : cookie } = await useFetch('/api/logoutsuperadmin',{
+    let {data : cookie } = await useFetch('/api/authhandle/logoutsuperadmin',{
      method: 'GET', 
       })
       if(cookie.value){

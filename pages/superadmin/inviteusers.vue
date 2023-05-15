@@ -1,6 +1,6 @@
 <script setup>
 let authenticated = false
-let {data : cookie } = await useFetch('/api/cookiegetter',{
+let {data : cookie } = await useFetch('/api/authhandle/cookiegetter',{
      method: 'GET', 
       })
       if(cookie.value.SAemail){
@@ -25,7 +25,7 @@ let firstinviteuser = ref('')
  let channelaccess = {
     channel:{}
  }
- let{data : res , refresh : refreshchannelacess } = await useFetch('/api/fetchallchanels', {
+ let{data : res , refresh : refreshchannelacess } = await useFetch('/api/fetch/fetchallchanels', {
      method: 'GET',
  })
  
@@ -42,7 +42,7 @@ let firstinviteuser = ref('')
   if(!email.value){
     return
 }
-let dress = await $fetch('/api/inviteuserswithacs', {
+let dress = await $fetch('/api/create/inviteuserswithacs', {
     method: 'POST',
     body:{
        e : email.value,
@@ -69,7 +69,7 @@ else{
  triggermodal.value = true
  editchannelemail.value = editchannelemailID
  }
-let {data : WholeUserData , refresh : refresh2} = await useFetch('/api/allmails', {
+let {data : WholeUserData , refresh : refresh2} = await useFetch('/api/fetch/allmails', {
      method: 'GET', 
  })
  let AllEmailsOfUsers = WholeUserData.value.mails
@@ -115,7 +115,7 @@ firstinviteuser.value = true
 
  const editsubmit = async ()=> {
 
-let afteredit = await $fetch('/api/editusersacs', {
+let afteredit = await $fetch('/api/edit/editusersacs', {
     method: 'POST',
     body:{
        e : editchannelemail.value,
@@ -138,7 +138,7 @@ const createchannelpage = ()=>{
     navigateTo('/superadmin/createchannel/')
 }
 const logoutfunction = async()=>{
-    let {data : cookie } = await useFetch('/api/logoutsuperadmin',{
+    let {data : cookie } = await useFetch('/api/authhandle/logoutsuperadmin',{
      method: 'GET', 
       })
       if(cookie.value){
