@@ -1,29 +1,31 @@
 <script setup>
-let authentication = false
+ definePageMeta({
+    middleware : 'user'
+  })
+// let authentication = false
 let Usergmail
-let {data : cookie } = await useFetch('/api/userget/logincookiegetter',{
+let {data : cookie } = await useFetch('/api/authhandle/logincookiegetter',{
      method: 'GET', 
       })
       if(cookie.value.loginemail){
-        authentication = true
      Usergmail = cookie.value.loginemail
       }
-      else{
-        navigateTo('/login')
-      }
+    //   else{
+    //     navigateTo('/login')
+    //   }
 
 const router = useRouter()
 function fetching(channelname){
     navigateTo(`/channel/${channelname}`)
 }
-let availablechannels = await $fetch('/api/userpost/fetchchannels', {
+let availablechannels = await $fetch('/api/fetch/fetchchannels', {
     method: 'POST',
     body:{
        e : Usergmail
     }, 
 })
 const logoutfunction = async()=>{
-    let {data : cookie } = await useFetch('/api/userget/logout',{
+    let {data : cookie } = await useFetch('/api/authhandle/logout',{
      method: 'GET', 
       })
       if(cookie.value){
@@ -34,10 +36,8 @@ const logoutfunction = async()=>{
 </script>  
 
 <template>
-    <div v-if="authentication">
         <button class = "logout" @click="logoutfunction()">LOGOUT</button>
        <p class = p> AVAILABLE CHANNELS </p>
-    </div>
     <button class = "channels" v-for="channel in availablechannels" @click="fetching(channel)">
         <div class = "channellayout">
         <h1>{{channel}}</h1>

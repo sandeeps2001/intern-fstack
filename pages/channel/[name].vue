@@ -1,16 +1,21 @@
 <script setup>
-let authentication = false
-let {data : cookie } = await useFetch('/api/userget/logincookiegetter',{
+let LoggedInEmail
+ definePageMeta({
+    middleware : 'user'
+  })
+// let authentication = false
+let {data : cookie } = await useFetch('/api/authhandle/logincookiegetter',{
      method: 'GET', 
       })
 if(cookie.value.loginemail){
-    authentication = true
+    // authentication = true
+    LoggedInEmail = cookie.value.loginemail 
 }
-else{
-navigateTo('/login')
-}
+// else{
+// navigateTo('/login')
+// }
 
-let LoggedInEmail = cookie.value.loginemail 
+
 const router = useRouter()
 let Editmessage = ref('')
 let read = ref('')
@@ -143,7 +148,6 @@ const logoutfunction = async()=>{
 </script>
 <template>
     <button class = "logout" @click="logoutfunction()">LOGOUT</button>
-    <div v-show="authentication">
     <div v-if="writter">
     <button>CREATE POST</button>
     </div>
@@ -166,7 +170,6 @@ const logoutfunction = async()=>{
     <div class = "writepost" v-show="createpostemodeal">
   <input class = "inputpost"  type="text" placeholder="type here...." v-model="PostNewmessage">
   <br><br><button class="submitpost" @click = "createpost()"> submit </button>
-    </div>
     </div>
     </div>
 </template>

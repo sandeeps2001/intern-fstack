@@ -1,14 +1,9 @@
 <script setup>
-let authenticated = false
-let {data : cookie } = await useFetch('/api/authhandle/cookiegetter',{
-     method: 'GET', 
-      })
-      if(cookie.value.SAemail){
-       authenticated = true
-      }
-      else{
-        navigateTo('/')
-      }
+// let authenticated = false
+definePageMeta({
+    middleware : 'superadmin'
+  })
+
 let triggermodal = ref('')
 let name = ref('')
 let email = ref('')
@@ -148,8 +143,7 @@ const logoutfunction = async()=>{
 }
 </script>
 
-<template>
-    <div v-show="authenticated">  
+<template> 
     <div class = "main" v-show="!triggermodal">
         <button class = "logout" @click="logoutfunction()">LOGOUT</button>  
         <div class = "nav" >
@@ -220,7 +214,6 @@ const logoutfunction = async()=>{
            <button class = "submit" @click="submitiu()">submit</button>
     </div>
     </div>
-</div>
 </template>
 
 

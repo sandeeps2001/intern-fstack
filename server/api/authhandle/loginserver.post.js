@@ -10,8 +10,8 @@ export default defineEventHandler(async (credentials) => {
       return false;
     }
     if (s.password === p && s.email === e) {
-      const token = jwt.sign({loginemail: e},process.env.NUXT_PRIVATE_SECRETKEY);
-             setCookie(credentials,'loginsession',token,{
+      const token = jwt.sign({loginemail: e , isadmin: false},process.env.NUXT_PRIVATE_SECRETKEY);
+             setCookie(credentials,'sessioncookie',token,{
                 httpOnly:true,
                 maxAge: 5 * 60 * 60,
             })

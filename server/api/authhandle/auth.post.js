@@ -9,8 +9,8 @@ export default defineEventHandler (async (credentials) =>{
         let{e,p}= await readBody(credentials)
         if( s.password===p && s.email===e){
             console.log("password matched")
-            const token = jwt.sign({SAemail: e}, process.env.NUXT_PRIVATE_SECRETKEY);
-             setCookie(credentials,'supersession',token,{
+            const token = jwt.sign({SAemail: e, isadmin:true}, process.env.NUXT_PRIVATE_SECRETKEY);
+             setCookie(credentials,'sessioncookie',token,{
                 httpOnly:true,
                 maxAge: 5 * 60 * 60,
             })

@@ -5,7 +5,7 @@ export default defineEventHandler((event) => {
   try{
     // const cookies = parseCookies(event)
     // return { cookies }
-    const token =  getCookie(event,'loginsession')
+    const token =  getCookie(event,'sessioncookie')
     console.log(token)
     const data =  jwt.verify(token,process.env.NUXT_PRIVATE_SECRETKEY);
     console.log(data)

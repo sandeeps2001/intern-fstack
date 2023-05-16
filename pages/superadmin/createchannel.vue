@@ -1,22 +1,22 @@
 <script setup>
-let authenticated
+// let authenticated
+definePageMeta({
+    middleware : 'superadmin'
+  })
 let gmail
 let {data : cookie } = await useFetch('/api/authhandle/cookiegetter',{
      method: 'GET', 
       })
       if(cookie.value.SAemail){
-       authenticated = true
+    //    authenticated = true
        gmail = cookie.value.SAemail
       }
-      else{
-        navigateTo('/')
-      }
+    //   else{
+    //     navigateTo('/')
+    //   }
 const deletechannel = async(chname)=>{
-    let {data : afterdelete} = await useFetch('/api/delete/deletechannel', {
-    method: 'POST',
-    body:{
-channelname : chname
-    },
+    let {data : afterdelete} = await useFetch(`/api/delete/${chname}`, {
+    method: 'DELETE'
 })
 
 if(afterdelete.value === true){
@@ -87,7 +87,6 @@ const logoutfunction = async()=>{
 
 
 <template>
-    <div v-show="authenticated">
      <div class = "main" v-show="!triggermodal">
         <button class = "logout" @click="logoutfunction()">LOGOUT</button>
         <div class = "nav" >
@@ -115,7 +114,6 @@ const logoutfunction = async()=>{
         <h2> create channel</h2>
         <input class = "channelname" type="text" placeholder="channelname" v-model="cname"  required>
         <button class = 'buttons' @click= "createchannelpage()">createchannel</button>
-    </div>
     </div>
 </template>
 

@@ -1,9 +1,16 @@
-// export default defineNuxtRouteMiddleware((to)=>{
-// const cookie  = $fetch('/api/userget/logincookiegetter')
+export default defineNuxtRouteMiddleware(async(to ,from)=>{
+const cookie  = await $fetch('/api/authhandle/logincookiegetter')
+console.log(cookie , "from middleware")
+if(cookie){
+return 
+}
+else{
+    return navigateTo('/login')
+}
 //  if(cookie){
-//     navigateTo(to)
+    // navigateTo()
 //  }
 //  else{
-//     navigateTo('/login')
+  
 //  }
-// })
+})
