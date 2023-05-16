@@ -1,9 +1,9 @@
 <script setup>
 // let authenticated
+let gmail
 definePageMeta({
     middleware : 'superadmin'
   })
-let gmail
 let {data : cookie } = await useFetch('/api/authhandle/cookiegetter',{
      method: 'GET', 
       })

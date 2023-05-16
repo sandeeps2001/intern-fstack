@@ -1,9 +1,17 @@
 <script setup>
 // let authenticated = false
+let gmail
 definePageMeta({
     middleware : 'superadmin'
   })
 
+  let {data : cookie } = await useFetch('/api/authhandle/cookiegetter',{
+     method: 'GET', 
+      })
+      if(cookie.value.SAemail){
+    //    authenticated = true
+       gmail = cookie.value.SAemail
+      }
 let triggermodal = ref('')
 let name = ref('')
 let email = ref('')
