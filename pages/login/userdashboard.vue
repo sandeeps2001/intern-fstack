@@ -18,11 +18,8 @@ const router = useRouter()
 function fetching(channelname){
     navigateTo(`/channel/${channelname}`)
 }
-let availablechannels = await $fetch('/api/fetch/fetchchannels', {
-    method: 'POST',
-    body:{
-       e : Usergmail
-    }, 
+let {data : availablechannels} = await useFetch('/api/fetch/fetchchannels', {
+    method: 'GET',
 })
 const logoutfunction = async()=>{
     let {data : cookie } = await useFetch('/api/authhandle/logout',{

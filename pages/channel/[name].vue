@@ -18,6 +18,7 @@ if(cookie.value.loginemail){
 
 const router = useRouter()
 let Editmessage = ref('')
+let messageid = ref('')
 let read = ref('')
 let  edit = ref('')
 let  del = ref('')
@@ -60,8 +61,9 @@ let WholeChannelMessage = await $fetch('/api/create/channelmsg', {
 if(!read && edit && del){
   writter.value = true
 }
-function editmodal(message){
+function editmodal(id , message){
 EditMessageModal.value = true
+messageid.value = id
 datachange.value = message
 }
 
@@ -72,9 +74,8 @@ return
 let update = await $fetch('/api/edit/messageupdate', {
     method: 'POST',
     body:{
-        oldvalue : datachange.value,
+        id : messageid.value,
         newvalue : Editmessage.value,
-        collection: ChannelName
     }
 });
 if (update === true){
@@ -90,12 +91,11 @@ else{
 }
 
 
-const deleteFunction = async (message)=>{
+const deleteFunction = async (_id)=>{
 let del = await $fetch('/api/delete/messagedelete', {
     method: 'POST',
     body:{
-        value : message,
-        collection: ChannelName
+        id : _id,
     }
 });
 if (del === true){
@@ -155,11 +155,11 @@ const logoutfunction = async()=>{
         <div v-show="!EditMessageModal">
     <h1>channel {{ ChannelName }}</h1>
     <button v-show="edit" @click="createpostmodal()">create post</button> 
-    <div v-show = "read" class="messages" v-for="message in WholeChannelMessage">
-        <h3>{{message}}</h3>
+    <div v-show = "read" class="messages" v-for="obj in WholeChannelMessage">
+        <h3>{{obj.message}}</h3>
         <div v-show="!EditMessageModal">
-    <button v-show="edit" @click ="editmodal(message)"> edit </button>
-    <button v-show="del" @click ="deleteFunction(message)"> delete </button>
+    <button v-show="edit" @click ="editmodal(obj.id,obj.message)"> edit </button>
+    <button v-show="del" @click ="deleteFunction(obj.id)"> delete </button>
     </div>
     </div>
         </div>

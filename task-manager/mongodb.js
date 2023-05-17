@@ -148,13 +148,20 @@ const allchannelnames = async (c) => {
 const fetchchannelmessage = async (c) => {
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    mes = [];
+    let mes = [];
+    let obj = {
+      id :'',
+      message : ''
+    }
     const db = await client.db(databaseName);
     const res = await db.collection('channelmsg').find({channel : c}).toArray();
     res.forEach((elm) => {
+      obj = {}
       if (elm.message) {
-        mes.push(elm.message);
+        obj['id']= elm._id
+        obj['message']= elm.message
       }
+      mes.push(obj)
     });
     console.log(mes ,"frombd");
     return mes;
@@ -192,12 +199,13 @@ const fetchchannelacs = async (cname, gmail) => {
   }
 };
 
-const messageupdate = async (oldvalue, newvalue, collection) => {
+const messageupdate = async (id, newvalue) => {
   try {
+    console.log(id, "from message update" )
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db(databaseName);
     const res = await db.collection('channelmsg').updateOne(
-      { message: oldvalue },
+      { _id: new ObjectId(id) },
       {
         $set: {
           message: newvalue,
@@ -212,13 +220,14 @@ const messageupdate = async (oldvalue, newvalue, collection) => {
   }
 };
 
-const messagedelete = async (value, collection) => {
+const messagedelete = async (id) => {
   try {
+    console.log(id , "from message delete")
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db(databaseName);
     const res = await db
       .collection('channelmsg')
-      .deleteOne({ message: value });
+      .deleteOne({ _id: new ObjectId(id) });
     console.log("field deleted");
     return true;
   } catch (err) {
@@ -266,14 +275,9 @@ const allmails = async()=>{
     const a = await db.collection('useraccess').find({}).toArray();
     a.forEach(async (element) => {
       gmails.push(element.email);
+      delete element.email
+      mykeys.push(element)
     });
-    for(let arr of gmails){
-      const b = await db.collection('useraccess').find({email : arr}).toArray()
-        for(let doc of b ){
-          delete doc.email
-            mykeys.push(doc)
-        }
-    }
     obj['mails']= gmails
     obj['access']= mykeys
     console.log(obj , 'romdb')
@@ -345,15 +349,16 @@ catch (err) {
 }
 
 const deletechannel = async (channeln) => {
-  let b = `${channeln}`;
+  console.log(channeln, '1st check')
   let myobj = {
-    [b]: "",
+    [channeln] : ""
   };
- let gmails = []
   try {
+    console.log(myobj)
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     let db = await client.db(databaseName);
-    await db.collection('channelmsg').updateMany({channelname : channeln},{$unset : {channelname:"", email:"", date:""}})
+    await db.collection('channelmsg').deleteMany({channelname : channeln})
+    await db.collection('channelmsg').deleteMany({channel : channeln})
     await db.collection('useraccess').updateMany({},{$unset :myobj})
     return true
   } catch (err) {

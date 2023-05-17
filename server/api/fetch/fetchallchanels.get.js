@@ -1,5 +1,5 @@
 import { allchannelnames } from "~~/task-manager/mongodb.js";
-export default defineEventHandler(async (credentials) => {
+export default defineEventHandler(async () => {
   try {
     var s = [];
     s = await allchannelnames();
