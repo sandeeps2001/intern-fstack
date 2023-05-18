@@ -24,7 +24,6 @@ let  edit = ref('')
 let  del = ref('')
 let writter = ref('')
 let EditMessageModal = ref('')
-let datachange = ref('')
 let createpostemodeal= ref('')
 let PostNewmessage = ref('')
 const routeURL = router.currentRoute.value.params
@@ -64,7 +63,7 @@ if(!read && edit && del){
 function editmodal(id , message){
 EditMessageModal.value = true
 messageid.value = id
-datachange.value = message
+Editmessage.value = message
 }
 
 const editmodalupdate = async ()=>{

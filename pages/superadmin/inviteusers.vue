@@ -45,7 +45,7 @@ let firstinviteuser = ref('')
   if(!email.value){
     return
 }
-let dress = await $fetch('/api/create/inviteuserswithacs', {
+let invitestatus = await $fetch('/api/create/inviteuserswithacs', {
     method: 'POST',
     body:{
        e : email.value,
@@ -54,12 +54,15 @@ let dress = await $fetch('/api/create/inviteuserswithacs', {
     },
     
 })
-if (dress === true){
+if (invitestatus === true){
     console.log("channel Access created")
     window.location.reload()
     firstinviteuser.value = false
     triggermodal.value = false
 }
+if (invitestatus === "Duplicateemail"){
+    alert('User EMAIL Already Exists')
+} 
 else{
     console.log("failed")
 }
@@ -67,18 +70,24 @@ else{
 
 
  const editchannelemail = ref('')
- function editUserAccess(editchannelemailID){
+ let permission = ref('')
+ function editUserAccess(editchannelemailID , permissions){
+console.log(permissions , "fromfrontend2")
  editusers.value = true
  triggermodal.value = true
  editchannelemail.value = editchannelemailID
+ permission.value = permissions
  }
 let {data : WholeUserData , refresh : refresh2} = await useFetch('/api/fetch/allmails', {
      method: 'GET', 
  })
+ let permissions = []
+ console.log(WholeUserData.value, "from frontend")
  let AllEmailsOfUsers = WholeUserData.value.mails
  for(let i = 0 ; i<WholeUserData.value.access.length ; i++){
  delete WholeUserData.value.access[i]._id
  UnformattedUserAccess.push(Object.keys(WholeUserData.value.access[i]))
+ permissions.push(WholeUserData.value.access[i])
  }
  UnformattedUserAccess.forEach(elm=>{
      UserAccess.push(elm.toString())
@@ -89,17 +98,38 @@ let {data : WholeUserData , refresh : refresh2} = await useFetch('/api/fetch/all
  AllEmailsOfUsers.forEach((elm , index)=> {
      ObjectArrayforUsers = {}
  ObjectArrayforUsers['email'] = elm
- ObjectArrayforUsers['UnformattedUserAccess'] = UserAccess[index]
+ ObjectArrayforUsers['UserAccess'] = UserAccess[index]
+ ObjectArrayforUsers['permissions'] = permissions[index]
  invitedusers.value.push(ObjectArrayforUsers)
  })
 
- function fetching(channelnamef){
-   
-   channelname.value = channelnamef
+ 
+
+ function fetching(channelnamef ,flag){
+    channelname.value = channelnamef
+    if(channelaccess.channel[channelnamef].read || channelaccess.channel[channelnamef].write || channelaccess.channel[channelnamef].del){
+        flag = false
+    }
+   if(flag){
+    if(permission.value[channelnamef]){
+    let arrayaccess = permission.value[channelnamef].split(" ")
+    arrayaccess.forEach(elm =>{
+    if(elm === "read"){
+        channelaccess.channel[channelnamef].read = true
+    }
+    if(elm === "write"){
+        channelaccess.channel[channelnamef].write = true
+    }
+    if(elm === "delete"){
+        channelaccess.channel[channelnamef].del = true
+    }
+    })
+   }
+}
    read.value = channelaccess.channel[channelnamef].read 
    write.value = channelaccess.channel[channelnamef].write
    del.value = channelaccess.channel[channelnamef].del
-   }
+}
 
    function readchecklistener(event){
       channelaccess.channel[channelname.value].read = event
@@ -169,8 +199,8 @@ const logoutfunction = async()=>{
    </tr>
    <tr v-for="i in invitedusers">
      <td>{{i.email}}</td>
-     <td>{{i.UnformattedUserAccess}}</td>
-     <td><button class = "inviteuserseditbutton" @click="editUserAccess(i.email)" >edit</button></td>
+     <td>{{i.UserAccess}}</td>
+     <td><button class = "inviteuserseditbutton" @click="editUserAccess(i.email , i.permissions)" >edit</button></td>
    </tr>
  
      </table>
@@ -180,7 +210,7 @@ const logoutfunction = async()=>{
        <div class = "containeredit">
          <h1>Edit User</h1>
          <p class = "p"><h2>AVAILABLE CHANNELS </h2></p>
-         <button class = "channels" v-for="channel in res" @click="fetching(channel)">
+         <button class = "channels" v-for="channel in res" @click="fetching(channel , true)">
          <div class = "cd">
          <h1>{{channel}}</h1>
          </div>
@@ -301,16 +331,21 @@ margin-top: 50px;
     margin-left: 200px;
     position: absolute;
     background-color: blue;
+    
  :hover{
     color: aliceblue;
  }
 }
 
   .inviteuserspage{
-  padding: 0;
+padding-right: 10px;
+  padding-left: 10px;
+  border: 2px solid black;
   cursor: pointer;
   background: none;
-  border: none;
+  padding-right: 10px;
+  padding-left: 10px;
+  border: 2px solid black;
   margin-left: 600px;
   margin-top: 150px;
   :hover{
@@ -321,12 +356,14 @@ margin-top: 50px;
     border: 2px solid black;
     width: auto;
     height: auto;
+    background-color: lightgrey;
 }
   .channelpage{
-  padding: 0;
+  padding-right: 10px;
+  padding-left: 10px;
+  border: 2px solid black;
   cursor: pointer;
   background: none;
-  border: none;
   margin-left: 80px;
   :hover{
   color: blue ;

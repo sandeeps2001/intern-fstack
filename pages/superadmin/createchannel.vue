@@ -205,7 +205,9 @@ margin-top: 50px;
   padding: 0;
   cursor: pointer;
   background: none;
-  border: none;
+  padding-right: 10px;
+  padding-left: 10px;
+  border: 2px solid black;
   margin-left: 600px;
   margin-top: 150px;
   :hover{
@@ -216,16 +218,16 @@ margin-top: 50px;
     border: 2px solid black;
     width: auto;
     height: auto;
+    background-color: lightgrey;
 }
   .createchannelpage{
   padding: 0;
   cursor: pointer;
   background: none;
-  border: none;
+  border: 2px solid black;
+  padding-right: 10px;
+  padding-left: 10px;
   margin-left: 80px;
-  :hover{
-  color: blue ;
-  }
   }
 
   .channelcontainer{

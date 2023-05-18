@@ -250,9 +250,18 @@ const messagecreatembd = async (messagedata, collection) => {
 
 const inviteuserswithacs = async (mainobj) => {
   try {
-    console.log(mainobj)
+    let flag = false
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db("internproject");
+    const check = await db.collection('useraccess').find({}).toArray()
+    check.forEach(elm=>{
+      if(elm.email === mainobj.email){
+        flag = true
+      }
+    })
+    if(flag){
+      return "Duplicateemail"
+    }
     const res = await db.collection('useraccess').insertOne(mainobj);
     return true;
   } catch (err) {
