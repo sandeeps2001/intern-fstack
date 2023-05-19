@@ -1,3 +1,5 @@
+import {getCookie } from 'h3'
+import jwt from 'jsonwebtoken'
 import{fetchchannelmessage} from '~~/task-manager/mongodb.js'
 export default defineEventHandler (async (credentials) =>{
     try{
@@ -8,7 +10,12 @@ export default defineEventHandler (async (credentials) =>{
             console.log("channel not parsed");
             return false
         }
-         let s  = await fetchchannelmessage(cname)
+        const token =  getCookie(credentials,'sessioncookie')
+        console.log(token)
+        const data =  jwt.verify(token,process.env.NUXT_PRIVATE_SECRETKEY);
+        const email = data.loginemail
+        console.log(data , "from channelmsg api call")
+         let s  = await fetchchannelmessage(cname , email)
              return s
             } 
             catch(error){

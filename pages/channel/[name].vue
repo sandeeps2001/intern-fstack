@@ -17,6 +17,7 @@ if(cookie.value.loginemail){
 
 
 const router = useRouter()
+let flag = ref('')
 let Editmessage = ref('')
 let messageid = ref('')
 let read = ref('')
@@ -51,12 +52,16 @@ acs.forEach(element => {
 });
 
 
-let WholeChannelMessage = await $fetch('/api/create/channelmsg', {
+let {data : WholeChannelMessage} = await useFetch('/api/create/channelmsg', {
     method: 'POST',
     body:{
        cname : ChannelName
     }
 });
+console.log(WholeChannelMessage.value)
+if(WholeChannelMessage.value.specific){
+    flag.value = true
+}
 if(!read && edit && del){
   writter.value = true
 }
@@ -154,7 +159,10 @@ const logoutfunction = async()=>{
         <div v-show="!EditMessageModal">
     <h1>channel {{ ChannelName }}</h1>
     <button v-show="edit" @click="createpostmodal()">create post</button> 
-    <div v-show = "read" class="messages" v-for="obj in WholeChannelMessage">
+    <div v-show = "flag" class="messages" v-for="obj in WholeChannelMessage.specific">
+        <h3>{{obj.message}}</h3>
+    </div>
+    <div v-show = "read" class="messages" v-for="obj in WholeChannelMessage.others">
         <h3>{{obj.message}}</h3>
         <div v-show="!EditMessageModal">
     <button v-show="edit" @click ="editmodal(obj.id,obj.message)"> edit </button>

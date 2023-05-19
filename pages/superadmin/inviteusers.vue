@@ -86,6 +86,7 @@ let {data : WholeUserData , refresh : refresh2} = await useFetch('/api/fetch/all
  let AllEmailsOfUsers = WholeUserData.value.mails
  for(let i = 0 ; i<WholeUserData.value.access.length ; i++){
  delete WholeUserData.value.access[i]._id
+ delete WholeUserData.value.access[i].key
  UnformattedUserAccess.push(Object.keys(WholeUserData.value.access[i]))
  permissions.push(WholeUserData.value.access[i])
  }

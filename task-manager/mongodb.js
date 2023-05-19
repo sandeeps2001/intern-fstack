@@ -8,7 +8,7 @@ const dbc = async () => {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db(databaseName);
     const s = await db
-      .collection("superadmin")
+      .collection("logincred")
       .findOne({ _id: new ObjectId("6436ad4ac6c5059af04f46e3") });
     return s;
   } catch (err) {
@@ -74,7 +74,7 @@ const logincheck = async (e, p) => {
 //create channel
 const createchannel = async (c, d, e) => {
   try {
-    flag = true
+    let flag = true
     const signal = "alreadyExists"
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db(databaseName);
@@ -112,6 +112,7 @@ const fetchchannel = async (e) => {
   a.forEach(elm=>{
     delete elm._id 
     delete elm.email
+    delete elm.key
   })
   a.forEach(elm=>{
     channelnames = Object.keys(elm) 
@@ -145,26 +146,45 @@ const allchannelnames = async (c) => {
   }
 };
 
-const fetchchannelmessage = async (c) => {
+const fetchchannelmessage = async (c , email) => {
   try {
+    let key 
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    let mes = [];
-    let obj = {
-      id :'',
-      message : ''
-    }
+    let others = []
+    let specific = []
+    let obj ={}
+    let allmessages = {}
     const db = await client.db(databaseName);
     const res = await db.collection('channelmsg').find({channel : c}).toArray();
+    const arr = await db.collection('useraccess').find({email : email}).toArray();
+    arr.forEach(elm=>{
+      if(elm.key){
+        key = elm.key
+      }
+    })
     res.forEach((elm) => {
       obj = {}
-      if (elm.message) {
-        obj['id']= elm._id
-        obj['message']= elm.message
-      }
-      mes.push(obj)
-    });
-    console.log(mes ,"frombd");
-    return mes;
+       if (elm.key === key) {
+        obj['id'] = elm._id
+        obj['message'] = elm.message 
+        specific.push(obj)
+       }
+       else{
+        obj['id'] = elm._id
+        obj['message'] = elm.message
+        others.push(obj) 
+       }
+      })
+        allmessages['others']= others
+         allmessages['specific']= specific
+    //   }
+    //   mes.push(obj)
+    // });
+    // console.log(mes ,"frombd");
+    // return mes;
+    // return res.filter(m=>m.message).map(m=>({id:m._id,message:m.message}))
+    console.log(allmessages , "from fetchchannel messsage")
+    return allmessages
   } catch (err) {
     console.log("err", err);
     return false;
@@ -240,7 +260,14 @@ const messagecreatembd = async (messagedata, collection) => {
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db(databaseName);
-    await db.collection('channelmsg').insertOne({channel : collection, message: messagedata });
+    const arr = await db.collection('useraccess').find({}).toArray()
+    let Key
+    arr.forEach(elm=>{
+      if(elm.key){
+        Key = elm.key 
+      }
+    })
+    await db.collection('channelmsg').insertOne({channel : collection, message: messagedata , key:Key });
     return true;
   } catch (err) {
     console.log("err", err);
@@ -305,6 +332,11 @@ const edituseracs = async (emailId, mainobj) => {
     console.log(mainobj,'fromedituserdb')
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db(databaseName);
+    const arr = await db.collection('useraccess').find({email : emailId}).toArray()
+    arr.forEach(elm=>{
+      if(elm.key)
+      mainobj['key'] = elm.key
+    })
     await db.collection('useraccess').deleteOne({email : emailId})
     await db.collection('useraccess').insertOne(mainobj)
     return true
