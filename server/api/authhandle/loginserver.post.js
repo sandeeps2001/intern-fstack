@@ -1,6 +1,7 @@
 import { logincheck } from "~~/task-manager/mongodb.js";
 import {setCookie } from 'h3'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 export default defineEventHandler(async (credentials) => {
   try {
     let { e, p } = await readBody(credentials);
@@ -9,7 +10,8 @@ export default defineEventHandler(async (credentials) => {
     if (!s) {
       return false;
     }
-    if (s.password === p && s.email === e) {
+    let passcheck = bcrypt.compareSync(p, s.password)
+    if (passcheck && s.email === e) {
       const token = jwt.sign({loginemail: e , isadmin: false},process.env.NUXT_PRIVATE_SECRETKEY);
              setCookie(credentials,'sessioncookie',token,{
                 httpOnly:true,

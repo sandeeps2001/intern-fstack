@@ -148,7 +148,7 @@ const allchannelnames = async (c) => {
 
 const fetchchannelmessage = async (c , email) => {
   try {
-    let key 
+    let msgkey 
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     let others = []
     let specific = []
@@ -159,12 +159,12 @@ const fetchchannelmessage = async (c , email) => {
     const arr = await db.collection('useraccess').find({email : email}).toArray();
     arr.forEach(elm=>{
       if(elm.key){
-        key = elm.key
+        msgkey = elm.key
       }
     })
     res.forEach((elm) => {
       obj = {}
-       if (elm.key === key) {
+       if (elm.key === msgkey) {
         obj['id'] = elm._id
         obj['message'] = elm.message 
         specific.push(obj)
@@ -256,11 +256,11 @@ const messagedelete = async (id) => {
   }
 };
 
-const messagecreatembd = async (messagedata, collection) => {
+const messagecreatembd = async (messagedata, collection, email) => {
   try {
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db(databaseName);
-    const arr = await db.collection('useraccess').find({}).toArray()
+    const arr = await db.collection('useraccess').find({email : email}).toArray()
     let Key
     arr.forEach(elm=>{
       if(elm.key){

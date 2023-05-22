@@ -1,14 +1,20 @@
 import { signuppost } from "~~/task-manager/mongodb.js";
+import bcrypt from 'bcrypt'
 export default defineEventHandler(async (credentials) => {
   try {
+const saltRounds = 10;
+
     let { e, p } = await readBody(credentials);
     if (!e || !p) {
       return false;
     }
-    const InsertingCredentialsIntoDatabase = await signuppost(e, p);
-    console.log(InsertingCredentialsIntoDatabase, "fromsignupAPI");
-    return InsertingCredentialsIntoDatabase
-    }
+const myPlaintextPassword = p ;
+const salt = bcrypt.genSaltSync(saltRounds);
+const hash = bcrypt.hashSync(myPlaintextPassword, salt);
+const InsertingCredentialsIntoDatabase = await signuppost(e, hash);
+console.log(InsertingCredentialsIntoDatabase, "fromsignupAPI");
+return InsertingCredentialsIntoDatabase
+}
    catch (error) {
     console.log(error);
   }

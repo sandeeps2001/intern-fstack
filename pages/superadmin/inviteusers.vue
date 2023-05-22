@@ -32,6 +32,12 @@ let firstinviteuser = ref('')
      method: 'GET',
  })
  
+ let {data : allchannel , refresh } = await useFetch('/api/fetch/allchannels',{
+    method: 'GET', 
+    })
+
+let onlychannelnames = allchannel.value 
+
  res.value.forEach(elm=>{
      channelaccess.channel[elm] = {
      read : false,
@@ -72,11 +78,29 @@ else{
  const editchannelemail = ref('')
  let permission = ref('')
  function editUserAccess(editchannelemailID , permissions){
+    permission.value = permissions
+    onlychannelnames.forEach(channelnamef=>{
+        console.log(channelnamef.channelname , "from inside foreach")
+    if(permission.value[channelnamef.channelname]){
+    let arrayaccess = permission.value[channelnamef.channelname].split(" ")
+    arrayaccess.forEach(elm =>{
+    if(elm === "read"){
+        channelaccess.channel[channelnamef.channelname].read = true
+    }
+    if(elm === "write"){
+        channelaccess.channel[channelnamef.channelname].write = true
+    }
+    if(elm === "delete"){
+        channelaccess.channel[channelnamef.channelname].del = true
+    }
+    })
+   } 
+})  
 console.log(permissions , "fromfrontend2")
  editusers.value = true
  triggermodal.value = true
  editchannelemail.value = editchannelemailID
- permission.value = permissions
+
  }
 let {data : WholeUserData , refresh : refresh2} = await useFetch('/api/fetch/allmails', {
      method: 'GET', 
@@ -106,31 +130,13 @@ let {data : WholeUserData , refresh : refresh2} = await useFetch('/api/fetch/all
 
  
 
- function fetching(channelnamef ,flag){
+ function fetching(channelnamef){
     channelname.value = channelnamef
-    if(channelaccess.channel[channelnamef].read || channelaccess.channel[channelnamef].write || channelaccess.channel[channelnamef].del){
-        flag = false
-    }
-   if(flag){
-    if(permission.value[channelnamef]){
-    let arrayaccess = permission.value[channelnamef].split(" ")
-    arrayaccess.forEach(elm =>{
-    if(elm === "read"){
-        channelaccess.channel[channelnamef].read = true
-    }
-    if(elm === "write"){
-        channelaccess.channel[channelnamef].write = true
-    }
-    if(elm === "delete"){
-        channelaccess.channel[channelnamef].del = true
-    }
-    })
-   }
-}
    read.value = channelaccess.channel[channelnamef].read 
    write.value = channelaccess.channel[channelnamef].write
    del.value = channelaccess.channel[channelnamef].del
 }
+
 
    function readchecklistener(event){
       channelaccess.channel[channelname.value].read = event
@@ -211,7 +217,7 @@ const logoutfunction = async()=>{
        <div class = "containeredit">
          <h1>Edit User</h1>
          <p class = "p"><h2>AVAILABLE CHANNELS </h2></p>
-         <button class = "channels" v-for="channel in res" @click="fetching(channel , true)">
+         <button class = "channels" v-for="channel in res" @click="fetching(channel)">
          <div class = "cd">
          <h1>{{channel}}</h1>
          </div>
@@ -219,7 +225,7 @@ const logoutfunction = async()=>{
          <div>
              <div class = "cb" v-show="channelname">
          <label class = "G"> read </label>
-         <input type = "checkbox" value="true" v-model= "read" @change="readchecklistener($event.target._modelValue)" >     
+         <input type = "checkbox" value="read" v-model= "read" @change="readchecklistener($event.target._modelValue)" >     
       <label class = "G"> write</label>   
          <input type = "checkbox" value="write" v-model="write" @change="writechecklistener($event.target._modelValue)"   >
          <label class = "G">delete</label>
@@ -243,7 +249,7 @@ const logoutfunction = async()=>{
         <div>
             <div class = "cb" v-show="channelname">
         <label class = "G"> read </label>
-        <input type = "checkbox" value="true" v-model= "read" @change="readchecklistener($event.target._modelValue)" >     
+        <input type = "checkbox" value="read" v-model= "read" @change="readchecklistener($event.target._modelValue)" >     
      <label class = "G"> write</label>   
         <input type = "checkbox" value="write" v-model="write" @change="writechecklistener($event.target._modelValue)"   >
         <label class = "G">delete</label>

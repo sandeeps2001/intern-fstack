@@ -58,8 +58,10 @@ let {data : WholeChannelMessage} = await useFetch('/api/create/channelmsg', {
        cname : ChannelName
     }
 });
-console.log(WholeChannelMessage.value)
-if(WholeChannelMessage.value.specific){
+
+console.log(WholeChannelMessage.value.specific , "specific")
+console.log(WholeChannelMessage.value.others , "others")
+if(WholeChannelMessage.value.specific && read){
     flag.value = true
 }
 if(!read && edit && del){
@@ -122,14 +124,14 @@ const createpost = async()=>{
         createpostemodeal.value = false
         return
     }
-    let create = await $fetch('/api/create/messagecreate', {
+    let {data :create} = await useFetch('/api/create/messagecreate', {
     method: 'POST',
     body:{
         messagedata : PostNewmessage.value,
         collection: ChannelName
     }
 });
-if(create === true){
+if(create.value === true){
     console.log("post created")
     createpostemodeal.value = false
     window.location.reload()
@@ -159,10 +161,10 @@ const logoutfunction = async()=>{
         <div v-show="!EditMessageModal">
     <h1>channel {{ ChannelName }}</h1>
     <button v-show="edit" @click="createpostmodal()">create post</button> 
-    <div v-show = "flag" class="messages" v-for="obj in WholeChannelMessage.specific">
+    <div v-show = "flag" class="messages" v-for="obj in WholeChannelMessage.others">
         <h3>{{obj.message}}</h3>
     </div>
-    <div v-show = "read" class="messages" v-for="obj in WholeChannelMessage.others">
+    <div v-show = "read" class="messages" v-for="obj in WholeChannelMessage.specific">
         <h3>{{obj.message}}</h3>
         <div v-show="!EditMessageModal">
     <button v-show="edit" @click ="editmodal(obj.id,obj.message)"> edit </button>
