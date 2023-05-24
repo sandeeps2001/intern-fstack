@@ -14,8 +14,6 @@ if(cookie.value.loginemail){
 // else{
 // navigateTo('/login')
 // }
-
-
 const router = useRouter()
 let flag = ref('')
 let Editmessage = ref('')
@@ -153,24 +151,40 @@ const logoutfunction = async()=>{
 
 </script>
 <template>
+    <div class ="background">
     <button class = "logout" @click="logoutfunction()">LOGOUT</button>
     <div v-if="writter">
-    <button>CREATE POST</button>
+ <button v-show="edit" @click="createpostmodal()">create post</button>
     </div>
     <div v-else>
         <div v-show="!EditMessageModal">
-    <h1>channel {{ ChannelName }}</h1>
-    <button v-show="edit" @click="createpostmodal()">create post</button> 
-    <div v-show = "flag" class="messages" v-for="obj in WholeChannelMessage.others">
-        <h3>{{obj.message}}</h3>
+    <div class= "head">channel -  {{ ChannelName }}</div>
+    <div class = "parent" v-show="read"> 
+    <div class = "othermessages" >
+        <h1 class="channelmessages">CHANNEL MESSAGES</h1>
+    <div v-show = "flag"  v-for="obj in WholeChannelMessage.others">
+        <div class="messages">
+        <h2>{{obj.message}}</h2>
+        </div>
     </div>
-    <div v-show = "read" class="messages" v-for="obj in WholeChannelMessage.specific">
-        <h3>{{obj.message}}</h3>
+    </div>
+    <div class = "specificmessages">
+    <h1 class = "yourmessages">YOUR MESSAGES</h1>
+    <div v-show = "read" v-for="obj in WholeChannelMessage.specific">
+        <div class="messages">
+        <h2>{{obj.message}}</h2>
         <div v-show="!EditMessageModal">
-    <button v-show="edit" @click ="editmodal(obj.id,obj.message)"> edit </button>
-    <button v-show="del" @click ="deleteFunction(obj.id)"> delete </button>
+    <button class = "edit" v-show="edit" @click ="editmodal(obj.id,obj.message)"> edit </button>
+    <button class = "del" v-show="del" @click ="deleteFunction(obj.id)"> delete </button>
     </div>
     </div>
+    </div>
+        </div>
+        </div>
+        <div class = 'send'  v-show="edit">
+            <input type= "text" class=" sendbox" v-model="PostNewmessage">
+            <button class = "sendbutton" @click = "createpost()"> send </button>
+            </div>
         </div>
     <div class = "emodalc" v-show="EditMessageModal">
   <input class = "inp"  type="text" placeholder="type here...." v-model="Editmessage">
@@ -181,23 +195,143 @@ const logoutfunction = async()=>{
   <br><br><button class="submitpost" @click = "createpost()"> submit </button>
     </div>
     </div>
+    </div>
 </template>
 
 
-<style setup>
-.messages{
-display: flexbox;
-width : max-width;
-height : 100px;
-border: 2px solid black;
+<style scoped >
+*{
+    padding: 0;
+    margin: 0;
 }
+.head{
+    text-align: center;
+    font-size: 3em;
+    text-transform : uppercase;
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+.submit{
+    color: rgb(255, 255, 255);
+    font-weight: bolder;
+    text-transform: capitalize;
+    width : 120px;
+    height: 40px;
+    background-color: blue;
+}
+.background{
+    background: url("../../static/1.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 1;
+    width: 100vw;
+    height: 100vh;
+}
+.edit{
+    width:60px;
+    height: 30px;
+    margin-top: 20px;
+    color:rgb(255, 255, 255);
+    background-color: rgb(47, 0, 216);
 
+}
+.del{
+    width:60px;
+    height: 30px;
+margin-top: 20px;
+color:rgb(255, 253, 253);
+    background-color: rgb(255, 0, 0);
+    margin-right: 10px;
+}
+.channelmessages{
+    text-align:center;
+    align-items: center;
+border-bottom-style :double ;
+border-color:rgb(0, 0, 0);
+}
+h1.channelmessages {
+    color: white;
+    background-color: black;
+    font-style: italic;
+    font-family: cursive
+}
+h1.yourmessages {
+    color: white;
+    background-color: black;
+    font-style: italic;
+    font-family: cursive
+}
+.yourmessages{
+    text-align:center;
+border-bottom-style :double ;
+border-color:rgb(0, 0, 0);
+}
+.parent{
+    margin-top: 50px;
+    margin-left: 350px;
+    display: flex;
+}
+.send{
+    margin-left: 350px;
+ display: flex;
+}
+.sendbutton{
+    font-size: larger;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    margin-top: 40px ;
+    height : 50px;
+    border : none;
+    width: 80px;
+    margin-left: 10px;
+    background: rgb(46, 228, 22);
+}
+.messages{
+    justify-content: space-between;
+    display: flex;
+    border-bottom: 2px solid black;
+    text-align: center;
+}
+.messages h2{
+    margin : 20px 50px;
+    word-break: break-all;
+    
+}
+.sendbox{
+    margin-top: 40px ;
+    width: 72%;
+    height : 50px;
+}
+.othermessages{
+    color: rgb(0, 0, 0);
+    font-size: larger;
+background-color: rgba(193, 226, 245, 0.5);
+display: flex;
+width : 600px;
+flex-direction: column;
+border: 2px solid black;
+font-weight: bold;
+}
+.specificmessages{
+  
+background-color:  rgba(139, 231, 136, 0.377);
+margin-left: 110px; 
+font-size: larger; 
+flex-direction: column;  
+display: flex;
+width : 600px;
+border: 2px solid black;
+font-weight: bolder;
+}
 .logout{
     float: right;
+    height: 55px;
+    width: 80px;
+
 }
 .emodalc{
-    background-color: blue;
-    margin-left: 700px;
+    background-color: rgb(12, 226, 12);
+    margin-left: 800px;
     width: 300px;
     height: 300px;
 }

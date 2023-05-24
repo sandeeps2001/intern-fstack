@@ -14,6 +14,9 @@ let res = await $fetch('/api/authhandle/loginserver', {
        p : password.value
     }
 })
+if(res === 'please complete signup and comeback'){
+    resp.value = res
+}
 if (res === true){
     navigateTo('/login/userdashboard/');
 }

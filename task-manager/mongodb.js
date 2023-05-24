@@ -2,19 +2,7 @@ const { NULL } = require("sass");
 const { MongoClient, ObjectId } = require("mongodb");
 const connectionURL = process.env.NUXT_PRIVATE_DB_USER;
 const databaseName = "internproject";
-//superadmin
-const dbc = async () => {
-  try {
-    const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
-    const db = await client.db(databaseName);
-    const s = await db
-      .collection("logincred")
-      .findOne({ _id: new ObjectId("6436ad4ac6c5059af04f46e3") });
-    return s;
-  } catch (err) {
-    console.log("err", err);
-  }
-};
+
 //signup
 const signuppost = async (e, p) => {
   try {
@@ -29,20 +17,14 @@ const signuppost = async (e, p) => {
     checkifauthorized .forEach((element) => {
       if(e === element.email){
         flag = true
+        if(element.password){
+          flag2 = false
+        }
       }
-    });
-    const checkifUseralreadyExists  = await db.collection('logincred').find({}).toArray();
-    console.log(checkifUseralreadyExists)
-    checkifUseralreadyExists.forEach((element) => {
-      if(e === element.email){
-        flag2 = false
-      }
+
     });
     if(flag === true && flag2 === true){
-    await db.collection("logincred").insertOne({
-      email: `${e}`,
-      password: `${p}`,
-    });
+    await db.collection("useraccess").updateOne({email: e}, {$set:{password : p}});
     return true
   }
   else if(flag === true && flag2 === false){
@@ -59,11 +41,13 @@ const signuppost = async (e, p) => {
 //login
 const logincheck = async (e, p) => {
   try {
+    let signal = 'please complete signup and comeback' 
     const client = await MongoClient.connect(connectionURL, {useUnifiedTopology: true,});
     const db = await client.db(databaseName);
-    const lresult = await db
-      .collection("logincred")
-      .findOne({ email: `${e}`, password: `${p}` });
+    const lresult = await db.collection("useraccess").findOne({ email: e});
+    if(!lresult.password){
+      return signal
+    }
     console.log(lresult);
     return lresult;
   } catch (err) {
@@ -113,6 +97,7 @@ const fetchchannel = async (e) => {
     delete elm._id 
     delete elm.email
     delete elm.key
+    delete elm.password
   })
   a.forEach(elm=>{
     channelnames = Object.keys(elm) 
@@ -203,6 +188,9 @@ const fetchchannelacs = async (cname, gmail) => {
     res.forEach((ele) => {
       delete ele.email
       delete ele._id
+      if(ele.password){
+        delete ele.password
+      }
       let s = ele[cname];
       console.log(s,'0check')
       let g = s.toString();
@@ -312,6 +300,7 @@ const allmails = async()=>{
     a.forEach(async (element) => {
       gmails.push(element.email);
       delete element.email
+      delete element.password
       mykeys.push(element)
     });
     obj['mails']= gmails
@@ -334,8 +323,12 @@ const edituseracs = async (emailId, mainobj) => {
     const db = await client.db(databaseName);
     const arr = await db.collection('useraccess').find({email : emailId}).toArray()
     arr.forEach(elm=>{
-      if(elm.key)
+      if(elm.key){
       mainobj['key'] = elm.key
+      }
+      if(elm.password){
+      mainobj['password'] = elm.password
+      }
     })
     await db.collection('useraccess').deleteOne({email : emailId})
     await db.collection('useraccess').insertOne(mainobj)
@@ -410,7 +403,7 @@ const deletechannel = async (channeln) => {
 
 
 
-module.exports = {  dbc,
+module.exports = {  
   signuppost,
   logincheck,
   createchannel,
@@ -426,5 +419,4 @@ module.exports = {  dbc,
   edituseracs,
   allchannel,
   deletechannel
-  //    getuserswithacs
 };

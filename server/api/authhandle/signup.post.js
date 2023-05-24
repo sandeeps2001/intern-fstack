@@ -11,6 +11,7 @@ const saltRounds = 10;
 const myPlaintextPassword = p ;
 const salt = bcrypt.genSaltSync(saltRounds);
 const hash = bcrypt.hashSync(myPlaintextPassword, salt);
+console.log(hash , "hashedpassword")
 const InsertingCredentialsIntoDatabase = await signuppost(e, hash);
 console.log(InsertingCredentialsIntoDatabase, "fromsignupAPI");
 return InsertingCredentialsIntoDatabase

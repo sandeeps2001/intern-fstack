@@ -1,13 +1,15 @@
-import{dbc} from '~~/task-manager/mongodb.js'
 import {setCookie } from 'h3'
 import jwt from 'jsonwebtoken'
+import  bcrypt from 'bcrypt'
 export default defineEventHandler (async (credentials) =>{
     try{
         // const config = useRuntimeConfig();
         // console.log(config.private.password)
-        const s  = await dbc()
+        const password = "$2b$10$mxtU2nERZUcSvRb9273zueKWOK4e384BSJxVbvXgPkQz/4nLPQ2tG"
+        const email = 'sandy4adhi@gmail.com'
         let{e,p}= await readBody(credentials)
-        if( s.superpassword===p && s.superemail===e){
+        let hashedcheck =  bcrypt.compareSync(p, password) 
+        if( hashedcheck && email === e){
             console.log("password matched")
             const token = jwt.sign({SAemail: e, isadmin:true}, process.env.NUXT_PRIVATE_SECRETKEY);
              setCookie(credentials,'sessioncookie',token,{

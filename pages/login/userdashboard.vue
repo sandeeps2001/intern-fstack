@@ -33,19 +33,30 @@ const logoutfunction = async()=>{
 </script>  
 
 <template>
+    <div class ="back">       
         <button class = "logout" @click="logoutfunction()">LOGOUT</button>
        <p class = p> AVAILABLE CHANNELS </p>
+       <div class="container">
     <button class = "channels" v-for="channel in availablechannels" @click="fetching(channel)">
         <div class = "channellayout">
-        <h1>{{channel}}</h1>
+        <p class="block1">{{channel}}</p>
         </div>
-        </button> 
+        </button>
+        </div> 
+        </div>
     </template>
 <style scope>
+.container{
+    background-color: rgba(159, 114, 201, 0.082);
+    display: flex;
+    justify-content:space-evenly;
+}
+.block1{
+    font-size: 4em;
+}
 .channels{
-    height:  auto;
+    height:  250px;
     width: auto;
-    margin-left : 100px
 }
 
 .logout{
@@ -53,11 +64,13 @@ const logoutfunction = async()=>{
 }
 
 .p{
-    font-size :xx-large;
+    font-size : 3em;
 }
 .channellayout{
     width:200px;
     height: 200px;
     
 }
+.channellayout:hover{
+    color:blue;}
 </style>

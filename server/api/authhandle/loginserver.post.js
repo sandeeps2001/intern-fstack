@@ -6,11 +6,16 @@ export default defineEventHandler(async (credentials) => {
   try {
     let { e, p } = await readBody(credentials);
     const s = await logincheck(e, p);
+    if(s === 'please complete signup and comeback')
+    {
+      return s
+    }
     console.log(s, "val");
     if (!s) {
       return false;
     }
     let passcheck = bcrypt.compareSync(p, s.password)
+    console.log(passcheck , 'from login')
     if (passcheck && s.email === e) {
       const token = jwt.sign({loginemail: e , isadmin: false},process.env.NUXT_PRIVATE_SECRETKEY);
              setCookie(credentials,'sessioncookie',token,{
