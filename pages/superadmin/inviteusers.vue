@@ -217,11 +217,11 @@ const logoutfunction = async()=>{
        <div class = "containeredit">
          <h1>Edit User</h1>
          <p class = "p"><h2>AVAILABLE CHANNELS </h2></p>
-         <button class = "channels" v-for="channel in res" @click="fetching(channel)">
          <div class = "cd">
-         <h1>{{channel}}</h1>
-         </div>
-         </button>
+         <button class = "channels" v-for="channel in res" @click="fetching(channel)">
+         <div class = "channelshow">{{channel}}</div>
+        </button> 
+        </div>
          <div>
              <div class = "cb" v-show="channelname">
          <label class = "G"> read </label>
@@ -241,11 +241,11 @@ const logoutfunction = async()=>{
         <input class = "name" type="text" placeholder="name" v-model="name" required>
         <input class = "email" type="text" placeholder="email" v-model="email"  required>
         <p class = "p"><h2>AVAILABLE CHANNELS </h2></p>
-        <button class = "channels" v-for="channel in res" @click="fetching(channel)">
         <div class = "cd">
+        <button class = "channels" v-for="channel in res" @click="fetching(channel)">
         <h1>{{channel}}</h1>
+    </button>
         </div>
-        </button>
         <div>
             <div class = "cb" v-show="channelname">
         <label class = "G"> read </label>
@@ -264,11 +264,18 @@ const logoutfunction = async()=>{
 
 <style lang="scss" scoped>
 .cd{
-    display: block;
-    height: 50px;
-    width: 40px;
+    display: flex;
+    
 }
-
+.channels{
+    margin-left: 20px;
+}
+.channelshow{
+    height: 50px;
+    font-size: x-large;
+    font-weight: bold;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
 td {
   border: 1px solid black;
 font-size: x-large;
