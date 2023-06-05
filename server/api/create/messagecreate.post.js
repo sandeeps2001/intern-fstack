@@ -1,4 +1,4 @@
-import {getCookie } from 'h3'
+import { getCookie } from 'h3'
 import jwt from 'jsonwebtoken'
 import { messagecreatembd } from "~~/task-manager/mongodb.js";
 export default defineEventHandler(async (credentials) => {
@@ -10,14 +10,14 @@ export default defineEventHandler(async (credentials) => {
       return false;
     }
     let Usergmail
-    const token =  getCookie(credentials,'sessioncookie')
-    const cookie =  jwt.verify(token,process.env.NUXT_PRIVATE_SECRETKEY);
-       if(cookie.loginemail){
+    const token = getCookie(credentials, 'sessioncookie')
+    const cookie = jwt.verify(token, process.env.VITE_SECRETKEY);
+    if (cookie.loginemail) {
       Usergmail = cookie.loginemail
-       }
-    let s = await messagecreatembd(messagedata, collection , Usergmail);
+    }
+    let s = await messagecreatembd(messagedata, collection, Usergmail);
     return s;
-    
+
   } catch (error) {
     console.log(error);
   }

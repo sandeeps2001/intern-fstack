@@ -1,14 +1,14 @@
 import { fetchchannel } from "~~/task-manager/mongodb.js";
-import {getCookie } from 'h3'
+import { getCookie } from 'h3'
 import jwt from 'jsonwebtoken'
 export default defineEventHandler(async (event) => {
   try {
     let Usergmail
-    const token =  getCookie(event,'sessioncookie')
-    const cookie =  jwt.verify(token,process.env.NUXT_PRIVATE_SECRETKEY);
-       if(cookie.loginemail){
+    const token = getCookie(event, 'sessioncookie')
+    const cookie = jwt.verify(token, process.env.VITE_SECRETKEY);
+    if (cookie.loginemail) {
       Usergmail = cookie.loginemail
-       }
+    }
     if (!Usergmail) {
       console.log("email not matching");
       return false;

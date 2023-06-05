@@ -1,13 +1,12 @@
-export default async ()=>{
-let {data : cook } = await useFetch('/api/cookiegetter',{
-    method: 'GET', 
-    })
-    if(cook.value){
-    return true
+export const messapi =  async ()=>{
+let {data : cook } = await useFetch('/api/create/messagecreate',{
+    method: 'POST', 
+    body:{
+    messagedata:'hello we are testing',
+    collection : 'A'
     }
-    else{
-        navigateTo('/')
-        return false
+    })
+    return cook.value
     }
     // let router = useRouter()
     // if(!cook)
@@ -16,5 +15,5 @@ let {data : cook } = await useFetch('/api/cookiegetter',{
     // else{
     //     return cook
     // }
-}
+
 
