@@ -9,23 +9,49 @@
 // return response
 // }
 import { test, expect, describe } from "vitest";
-import { setup, fetch } from "@nuxt/test-utils";
+import { setup, $fetch } from "@nuxt/test-utils";
 
-describe('my test', async() => {
-    await setup({
-      server: true  
-    });
+describe('my test', async () => {
+  await setup({
+    server: true
+  });
   test("example test", async () => {
-    const response = await fetch("/api/create/channelmsg", {
+    const response = await $fetch("/api/create/channelmsg", {
       method: "POST",
       body: {
         cname: 'B',
       },
     });
-    expect(response).toBe(true)
+    expect(await response).toBe(true)
   });
-});
-
+})
+  // describe('myest', async () => {
+  //   await setup({
+  //     server: true
+  //   });
+  //   test("ext", async () => {
+  //     let channelaccess = {
+  //       channel:{
+  //           A:{
+  //               read:true,
+  //               write:true,
+  //               del:true
+  //           }
+  //       }
+  //   }
+  //   let arr1 = ['A','B','C']
+  //     const response = await $fetch("/api/create/inviteuserswithacs", {
+  //       method: "POST",
+  //       body: {
+  //         e: 'sandy4adhi@gmail.com',
+  //         arr: arr1,
+  //         obj: channelaccess
+  //       },
+  //     });
+  //     expect(await response.json()).toBe(true)
+  //   });
+  // });
+  
 
 
 
