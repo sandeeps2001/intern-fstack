@@ -11,7 +11,7 @@
 import { test, expect, describe } from "vitest";
 import { setup, $fetch } from "@nuxt/test-utils";
 
-describe('my test', async () => {
+describe('create test', async () => {
   await setup({
     server: true
   });
