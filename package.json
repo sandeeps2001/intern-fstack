@@ -18,7 +18,7 @@
     "@vitest/coverage-c8": "^0.31.1",
     "env-cmd": "^8.0.2",
     "nuxt": "^3.4.0",
-    "vitest": "^0.31.1"
+    "vitest": "^0.31.4"
   },
   "description": "Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.",
   "version": "1.0.0",
@@ -35,6 +35,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^3.7.3",
+    "node": "^18.0.0",
     "sass": "^1.62.0"
   }
 }
