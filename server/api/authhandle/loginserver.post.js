@@ -11,7 +11,10 @@ export default defineEventHandler(async (credentials) => {
   if (flag == false){
     return 'please complete signup and comeback'
   }
-  else
+  else{
+    return true
+  }
+})
   // try {
   //   let { e, p } = await readBody(credentials);
   //   const s = await logincheck(e, p);
@@ -39,4 +42,3 @@ export default defineEventHandler(async (credentials) => {
   // catch (error) {
   //   console.log(error);
   // }
-});
