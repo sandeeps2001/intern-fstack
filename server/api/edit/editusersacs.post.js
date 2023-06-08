@@ -2,7 +2,9 @@ import { edituseracs } from "~~/task-manager/mongodb.js";
 export default defineEventHandler(async (credentials) => {
     let mainobj = {};
     let { e, arr, obj } = await readBody(credentials);
-
+    if(!e||!arr||!obj){
+      return false
+    }
     let mainarr = [];
     arr.forEach((elm) => {
       let str = "";

@@ -12,7 +12,12 @@ test("edituserswithacs correct parameteres", async () => {
               read:true,
               write:true,
               del:true
-          }
+          },
+          B:{
+            read:false,
+            write:true,
+            del:false
+          },
       }
     }
     let arr1 = ['A','B','C']

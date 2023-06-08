@@ -15,6 +15,7 @@ export default defineEventHandler(async (credentials) => {
         else {
           return false
         }
+    })
     // try {
     //     // const config = useRuntimeConfig();
     //     // console.log(config.private.password)
@@ -36,4 +37,3 @@ export default defineEventHandler(async (credentials) => {
     //     console.log(error)
     //     return false
     // }
-})
