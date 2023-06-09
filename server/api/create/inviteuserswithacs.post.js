@@ -40,16 +40,8 @@ export default defineEventHandler(async (credentials) => {
     });
     mainobj['email'] = e
     mainobj['key'] = Date.now()
-    console.log(mainobj)
-    if(mainobj){
-      return true
-    }
-    else{
-      return false
-    
-    }
-    // const s = await inviteuserswithacs(mainobj);
-    // return s
+    const s = await inviteuserswithacs(mainobj);
+    return s
   }
   catch (error) {
   console.log(error);

@@ -8,15 +8,16 @@ export default defineEventHandler(async (credentials) => {
     return true
   }
 })
-//   try {
-//     let { id, newvalue } = await readBody(credentials);
-//     if (!id || !newvalue) {
-//       console.log("messages are not parsed");
-//       return false;
-//     }
-//     let s = await messageupdate(id, newvalue);
-//     return s;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+export default defineEventHandler(async (credentials) => {
+  try {
+    let { id, newvalue } = await readBody(credentials);
+    if (!id || !newvalue) {
+      console.log("messages are not parsed");
+      return false;
+    }
+    let s = await messageupdate(id, newvalue);
+    return s;
+  } catch (error) {
+    console.log(error);
+  }
+});

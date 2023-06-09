@@ -8,18 +8,21 @@ export default defineEventHandler(async (credentials) => {
         else{
             return true
         }
-    // try {
-    //     let { cname, gmail } = await readBody(credentials)
-    //     if (!gmail) {
-    //         console.log("email not parsed");
-    //         return false
-    //     }
+        
+        
+export default defineEventHandler(async (credentials) => {
+    try {
+        let { cname, gmail } = await readBody(credentials)
+        if (!gmail) {
+            console.log("email not parsed");
+            return false
+        }
 
-    //     let s = await fetchchannelacs(cname, gmail)
-    //     console.log(s)
-    //     return s
-    // }
-    // catch (error) {
-    //     return false
-    // }
+        let s = await fetchchannelacs(cname, gmail)
+        console.log(s)
+        return s
+    }
+    catch (error) {
+        return false
+    }
 })

@@ -78,7 +78,7 @@ const createchannel = async (c, d, e) => {
     return true
   } catch (err) {
     console.log("err", err);
-    return signal
+    return false
   }
 };
 

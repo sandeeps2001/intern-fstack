@@ -2,7 +2,20 @@ import { fetchchannel } from "~~/task-manager/mongodb.js";
 import { getCookie } from 'h3'
 import jwt from 'jsonwebtoken'
 export default defineEventHandler(async (event) => {
-  return true
+try {
+    let Usergmail = req.query
+    if (!Usergmail) {
+      console.log("email not matching");
+      return false;
+    }
+    let s = await fetchchannel(Usergmail);
+    return s;
+  } catch (error) {
+    console.log(error);
+  }
+
+
+
   // try {
   //   let Usergmail
   //   const token = getCookie(event, 'sessioncookie')
